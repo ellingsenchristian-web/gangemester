@@ -1,17 +1,29 @@
 {
-  "name": "Gangemester",
-  "short_name": "Gangemester",
-  "description": "Øv på gangetabellen fra 1 til 10.",
+  "name": "War of Castles",
+  "short_name": "War of Castles",
+  "description": "Vinn fargene tilbake fra Skyggebaronen med gangetabellen.",
   "lang": "nb",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F6F8FC",
-  "theme_color": "#F6F8FC",
+  "background_color": "#CFE8FF",
+  "theme_color": "#CFE8FF",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
   ]
 }
