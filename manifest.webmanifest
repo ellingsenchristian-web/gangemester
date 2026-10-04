@@ -1,7 +1,7 @@
 {
-  "name": "War of Castles",
-  "short_name": "War of Castles",
-  "description": "Vinn fargene tilbake fra Skyggebaronen med gangetabellen.",
+  "name": "Gangemester: Redd prinsessen",
+  "short_name": "Gangemester",
+  "description": "Utforsk riket, åpne hindringer med gangestykker og redd prinsesse Stella fra Skyggedragen.",
   "lang": "nb",
   "start_url": "./",
   "scope": "./",

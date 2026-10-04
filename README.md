@@ -1,22 +1,20 @@
-# War of Castles
+# Gangemester: Redd prinsessen
 
-Et gangetabellspill der riktige svar skyter katapulten mot Skyggebaronens slott. Det kan legges på hjemskjermen på iPhone og virker uten internett.
+Et eventyrspill med gangetabellen. Du går fritt rundt i et rike, og hver hindring på veien åpnes med gangestykker. Målet er å redde prinsesse Stella fra Skyggedragen i slottet. Spillet kan legges på hjemskjermen på iPhone og virker uten internett.
 
 **Spill:** https://ellingsenchristian-web.github.io/gangemester/
 
 ## Slik virker spillet
 
-- **Fem riker** som Skyggebaronen har stjålet fargene fra: Engriket (2, 5, 10), Skogriket (3, 4), Fjellriket (6, 7), Dragedalen (8, 9) og Skyggefestningen (alt blandet). Hvert rike har 7 etapper og en sjefsreise.
-- **Reiser.** Hver etappe er en vandring gjennom riket med 3 hjerter. På veien:
-  - Steinsprang over elva (velg riktig svar)
-  - Skattkiste med tre låser (finn tallet som mangler, f.eks. 7 × ? = 56)
-  - Trollbrua (legg 6 planker før tiden går ut)
-  - Skyggevette (svar før tiden går ut)
-  - Handelskvinne, gyllen skatt og fiendeslott med katapultkamp
-- **Stjerner** etter hvor mange hjerter du har igjen. Sjefsreisen krever 12 stjerner i riket.
-- **Butikken** har fem avdelinger: slott (oppgraderinger, pynt og farger), dronning (kjoler, hår, kroner, kappe, tryllestav), Glimt (farger og tilbehør), kjæledyr som hjelper på reisen, og utstyr (hjertedrikk, firkløver, skjoldamulett). Noe koster gull, noe koster diamanter fra skattkistene.
-- **Dragen Glimt** vokser med riktige svar og hjelper til i kamp. **Smia** øver rolig på de vanskeligste stykkene. **Stjernekartet** viser alle 100 gangestykker. **Rask kamp** gir en katapultkamp når som helst.
-- Vanskelighetsgraden tilpasses: spillet spør oftere om stykkene som ikke sitter, og tidsgrensene følger hvor raskt spilleren pleier å svare.
+- **Gå hvor du vil.** Bruk pilknappene, eller trykk et sted på kartet, så går figuren dit.
+- **Riket** har fem områder: landsbyen og engen (2, 5 og 10-gangen), skogen (3 og 4), fjellet (6 og 7), vulkanen (8 og 9) og drageslottet (alt blandet).
+- **Hindringer** stenger veien: tornebusk, steinblokk, ødelagt bro, låst port, troll, isvegg, lavaelv og slottsdør. Gå bort til en hindring og svar riktig på 2 til 5 gangestykker, så forsvinner den. Feil svar viser riktig svar, og så kommer et nytt stykke.
+- **Skattkister** ligger litt utenfor hovedveien. De gir gull og diamanter, og noen spør etter tallet som mangler (7 × ? = 56).
+- **Skyggedragen** vokter prinsessen. Hvert riktige svar er et treff, men et feil svar eller for lang tid gir ildpust. Du har 3 hjerter, hjertedrikker hjelper.
+- **Når prinsessen er reddet** kan du starte et nytt eventyr. Da kommer dragen tilbake og hindringene krever flere svar. Gull, diamanter og alt du har kjøpt beholder du.
+- **I landsbyen** finner du butikken (slott, heltinne, dragen Glimt, kjæledyr og utstyr), smia der du kan øve på de vanskeligste stykkene, og ditt eget slott med pynten du har kjøpt.
+- **Kartet** viser stedene du har vært. **Stjernekartet** viser alle 100 gangestykker.
+- Spillet spør oftere om stykkene som ikke sitter ennå, og tidsgrensen hos dragen følger hvor raskt spilleren pleier å svare.
 
 Framgangen lagres bare på enheten.
 

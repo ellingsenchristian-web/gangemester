@@ -1,7 +1,7 @@
 // Offline support for Gangemester.
 // The page itself is fetched network-first so updates arrive when online;
 // everything else is served from the cache.
-const CACHE = 'war-of-castles-v3';
+const CACHE = 'gangemester-world-v4';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
