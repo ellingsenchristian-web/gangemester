@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
-  /* Layout: one phone-sized column. Map screen scrolls; the battle screen fits one screen (scene, health bars, ammo, question, keypad). */
+  /* Layout: one phone-sized column. Map and shop scroll; journey and battle screens fit one screen (scene on top, challenge panel and keypad below). */
   :root {
     --paper: #F7F2FF;
     --card: #FFFFFF;
@@ -24,6 +24,7 @@
     --violet: #7C5CFF;
     --gold: #FFB627;
     --gold-ink: #6B4500;
+    --gem: #3FA9F5;
     --mint: #3CC9A0;
     --good: #1FA866;
     --bad: #F0566B;
@@ -59,7 +60,6 @@
   button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
   button:focus-visible, input:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
   button:disabled { cursor: default; }
-
   .btn {
     font-weight: 800; font-size: 17px;
     border: 2px solid var(--line); background: var(--card); border-radius: 16px; padding: 10px 16px;
@@ -69,15 +69,13 @@
   .btn.pink { background: var(--pink); border-color: var(--pink); color: #FFFFFF; box-shadow: 0 4px 0 #C93A7C; }
   .btn.violet { background: var(--violet); border-color: var(--violet); color: #FFFFFF; box-shadow: 0 4px 0 #5638D6; }
   .btn.gold { background: var(--gold); border-color: var(--gold); color: var(--gold-ink); box-shadow: 0 4px 0 #D18A00; }
+  .btn.gem { background: var(--gem); border-color: var(--gem); color: #FFFFFF; box-shadow: 0 4px 0 #1F7DC2; }
   .btn.big { font-size: 21px; padding: 14px 20px; width: 100%; }
   .btn:disabled { opacity: 0.5; box-shadow: none; transform: none; }
   .link { background: none; border: 0; padding: 4px 2px; color: var(--muted); font-weight: 800; text-decoration: underline; font-size: 15px; }
-
   .card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .spread { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-
-  /* top bar */
   .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .logo { font-weight: 900; font-size: 24px; letter-spacing: -0.01em; line-height: 1; }
   .logo span { color: var(--pink); }
@@ -88,24 +86,23 @@
   }
   .pill svg { width: 20px; height: 20px; }
   .coin { fill: var(--gold); stroke: #D18A00; stroke-width: 1.5; }
+  .gemi { fill: var(--gem); stroke: #1F7DC2; stroke-width: 1.2; }
   .star { fill: var(--gold); }
+  .heart { fill: var(--bad); }
+  .heart.off { fill: var(--line); }
 
-  /* dragon card */
-  .dragon { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: center; }
-  .dragon canvas { width: 84px; height: 84px; }
+  /* map */
+  .hero { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; }
+  .hero canvas { width: 96px; height: 96px; }
   .xpbar { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
   .xpbar > div { height: 100%; background: linear-gradient(90deg, var(--mint), var(--violet)); border-radius: 999px; }
-  .menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .menu button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; font-size: 15px; }
+  .menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .menu button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; font-size: 14px; }
   .menu svg { width: 30px; height: 30px; }
-
-  /* quest */
   .quest { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
   .dots7 { display: flex; gap: 5px; }
   .dots7 i { width: 22px; height: 22px; border-radius: 7px; background: var(--line); display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); }
   .dots7 i.on { background: var(--mint); color: #FFFFFF; }
-
-  /* kingdoms */
   .kingdom { border-radius: 24px; overflow: hidden; border: 2px solid var(--line); background: var(--card); box-shadow: var(--shadow); }
   .kbanner { position: relative; padding: 14px 16px 16px; color: #FFFFFF; min-height: 96px; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
   .kbanner .art { position: absolute; inset: 0; }
@@ -114,12 +111,12 @@
   .kbanner h2 { font-size: 24px; font-weight: 900; }
   .kbanner p { font-weight: 700; font-size: 14px; }
   .kbanner .tag { position: absolute; top: 10px; right: 10px; background: rgba(43, 35, 80, 0.55); color: #FFFFFF; border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 800; text-shadow: none; }
-  .path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 8px; padding: 16px 12px 18px; }
+  .path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 8px; padding: 16px 12px 20px; }
   .node {
     position: relative; aspect-ratio: 1 / 1; max-width: 76px; width: 100%; justify-self: center;
     border-radius: 50%; border: 3px solid var(--line); background: var(--paper);
     display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 22px;
-    box-shadow: 0 4px 0 var(--line);
+    box-shadow: 0 4px 0 var(--line); padding: 0;
   }
   .node.open { background: #FFFFFF; border-color: var(--violet); box-shadow: 0 4px 0 #5638D6; }
   .node.next { animation: bob 1.6s ease-in-out infinite; border-color: var(--pink); box-shadow: 0 4px 0 #C93A7C; }
@@ -131,6 +128,40 @@
   .st .off, .bigstars .off { fill: var(--line); }
   @keyframes bob { 50% { transform: translateY(-4px); } }
   .soon { padding: 14px 16px; color: var(--muted); font-size: 15px; }
+  .steps { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .steps span { background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 14px; font-weight: 800; }
+
+  /* journey + battle shared */
+  .scene { position: relative; border-radius: 22px; overflow: hidden; border: 2px solid var(--line); box-shadow: var(--shadow); background: var(--sky1); }
+  .scene canvas { display: block; width: 100%; height: auto; aspect-ratio: 800 / 420; max-width: 100%; }
+  .jtop { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .hearts { display: flex; gap: 2px; }
+  .hearts svg { width: 24px; height: 24px; }
+  .panel { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .panel h3 { font-size: 18px; font-weight: 900; }
+  .prog { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+  .prog i { width: 22px; height: 12px; border-radius: 4px; background: var(--line); display: block; }
+  .prog i.on { background: var(--mint); }
+  .timer { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .timer > div { height: 100%; background: var(--gold); border-radius: 999px; }
+  .qbox { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--paper); border: 2px solid var(--line); border-radius: 16px; padding: 6px 12px; min-height: 60px; transition: background-color 0.2s; }
+  .qbox.ok { background: #DDF7E9; border-color: var(--good); }
+  .qbox.no { background: #FFE2E6; border-color: var(--bad); }
+  .qtext { font-weight: 900; font-size: clamp(26px, 8vw, 40px); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .qans { font-weight: 900; font-size: clamp(26px, 8vw, 40px); min-width: 2.6ch; text-align: center; border-bottom: 4px solid var(--ink); font-variant-numeric: tabular-nums; }
+  .qans.empty { color: var(--line); }
+  .qmsg { text-align: center; font-weight: 900; min-height: 1.4em; font-size: 16px; }
+  .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .choices button { font-weight: 900; font-size: 28px; height: 64px; border-radius: 16px; border: 2px solid var(--line); background: #E9F6FF; box-shadow: 0 3px 0 #BFDDF2; }
+  .choices button:disabled { opacity: 0.3; }
+  .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .pad button { font-weight: 900; font-size: 26px; height: 52px; border-radius: 14px; border: 2px solid var(--line); background: var(--card); box-shadow: 0 3px 0 var(--line); }
+  .pad button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+  .pad .ok { background: var(--mint); border-color: var(--mint); color: #FFFFFF; box-shadow: 0 3px 0 #23977A; }
+  .pad .del { font-size: 20px; }
+  .market { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .market button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; font-size: 14px; }
+  .market b { font-size: 15px; }
 
   /* battle */
   .bhead { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
@@ -143,8 +174,6 @@
   .hp.right .hpbar > div { background: linear-gradient(90deg, #8E7BB8, #5B4A86); margin-left: auto; }
   .charge { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.7); overflow: hidden; }
   .charge > div { height: 100%; background: var(--bad); width: 0; }
-  .scene { position: relative; border-radius: 22px; overflow: hidden; border: 2px solid var(--line); box-shadow: var(--shadow); background: var(--sky1); }
-  .scene canvas { display: block; width: 100%; height: auto; aspect-ratio: 800 / 420; max-width: 100%; }
   .banner {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.94); border-radius: 18px; padding: 12px 18px; text-align: center; box-shadow: var(--shadow);
@@ -152,28 +181,10 @@
   }
   .banner h3 { font-size: 20px; font-weight: 900; }
   .ammo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .ammo button {
-    border: 2px solid var(--line); background: var(--card); border-radius: 14px; padding: 6px 4px;
-    display: flex; flex-direction: column; align-items: center; gap: 0; font-weight: 900; font-size: 14px; line-height: 1.15;
-  }
+  .ammo button { border: 2px solid var(--line); background: var(--card); border-radius: 14px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; font-weight: 900; font-size: 14px; line-height: 1.15; }
   .ammo button small { font-weight: 700; color: var(--muted); font-size: 12px; }
   .ammo button[aria-pressed="true"] { border-color: var(--pink); background: #FFE9F3; box-shadow: 0 3px 0 #FFB3D4; }
   .ammo i { width: 18px; height: 18px; border-radius: 50%; display: block; margin-bottom: 2px; }
-  .qbox { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 8px 12px; min-height: 66px; transition: background-color 0.2s; }
-  .qbox.ok { background: #DDF7E9; border-color: var(--good); }
-  .qbox.no { background: #FFE2E6; border-color: var(--bad); }
-  .qtext { font-weight: 900; font-size: clamp(28px, 8.5vw, 42px); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .qans { font-weight: 900; font-size: clamp(28px, 8.5vw, 42px); min-width: 2.6ch; text-align: center; border-bottom: 4px solid var(--ink); font-variant-numeric: tabular-nums; }
-  .qans.empty { color: var(--line); }
-  .qmsg { text-align: center; font-weight: 900; min-height: 1.4em; font-size: 16px; }
-  .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
-  .pad button {
-    font-weight: 900; font-size: 26px; height: 54px; border-radius: 14px; border: 2px solid var(--line); background: var(--card);
-    box-shadow: 0 3px 0 var(--line);
-  }
-  .pad button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
-  .pad .ok { background: var(--mint); border-color: var(--mint); color: #FFFFFF; box-shadow: 0 3px 0 #23977A; }
-  .pad .del { font-size: 20px; }
 
   /* modal */
   .modal { position: fixed; inset: 0; z-index: 20; background: rgba(43, 35, 80, 0.45); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
@@ -191,18 +202,23 @@
   .story { text-align: left; display: flex; flex-direction: column; gap: 10px; font-size: 16px; }
   .name-in { font: inherit; font-size: 20px; font-weight: 800; color: var(--ink); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; width: 100%; background: var(--paper); -webkit-user-select: text; user-select: text; }
 
-  /* workshop */
+  /* shop */
+  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .tabs button { border: 2px solid var(--line); background: var(--card); border-radius: 14px; padding: 8px 2px; font-weight: 900; font-size: 13px; }
+  .tabs button[aria-selected="true"] { background: var(--violet); border-color: var(--violet); color: #FFFFFF; }
+  .preview canvas { width: 100%; height: auto; aspect-ratio: 400 / 230; border-radius: 16px; display: block; }
   .shop { display: flex; flex-direction: column; gap: 10px; }
   .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; border: 2px solid var(--line); border-radius: 16px; padding: 10px 12px; }
   .item b { font-size: 17px; }
-  .item .pips { display: flex; gap: 4px; margin-top: 4px; }
-  .item .pips i { width: 16px; height: 8px; border-radius: 4px; background: var(--line); display: block; }
-  .item .pips i.on { background: var(--violet); }
+  .item.on { border-color: var(--mint); background: #F0FBF7; }
+  .pips { display: flex; gap: 4px; margin-top: 4px; }
+  .pips i { width: 16px; height: 8px; border-radius: 4px; background: var(--line); display: block; }
+  .pips i.on { background: var(--violet); }
   .swatches { display: flex; flex-wrap: wrap; gap: 10px; }
   .swatches button { width: 44px; height: 44px; border-radius: 12px; border: 3px solid #FFFFFF; box-shadow: 0 0 0 2px var(--line); position: relative; padding: 0; }
   .swatches button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--ink); }
-  .swatches button .price { position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--gold-ink); font-size: 10px; font-weight: 900; border-radius: 6px; padding: 0 4px; }
-  .preview canvas { width: 100%; height: auto; aspect-ratio: 400 / 220; border-radius: 16px; display: block; }
+  .price { position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%); color: var(--gold-ink); background: var(--gold); font-size: 10px; font-weight: 900; border-radius: 6px; padding: 0 4px; white-space: nowrap; }
+  .price.g { background: var(--gem); color: #FFFFFF; }
 
   /* star map */
   .map { display: grid; grid-template-columns: 26px repeat(10, 1fr); gap: 3px; font-variant-numeric: tabular-nums; }
@@ -223,6 +239,8 @@
   <defs>
     <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.4l2.95 6.1 6.65.8-4.9 4.55 1.3 6.6L12 17.2l-6 3.25 1.3-6.6L2.4 9.3l6.65-.8z"/></symbol>
     <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v9M9.5 9.5h4a1.5 1.5 0 010 3h-3a1.5 1.5 0 000 3h4" fill="none" stroke="#B57400" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9 3l3 18M15 3l-3 18" fill="none" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="1"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.8-8 11-8 11z"/></symbol>
   </defs>
 </svg>
 
@@ -231,15 +249,15 @@
   <section id="vMap" style="display:flex;flex-direction:column;gap:14px">
     <div class="top">
       <div class="logo">War of <span>Castles</span></div>
-      <div class="row">
+      <div class="row" style="gap:6px">
         <span class="pill" title="Gull"><svg class="coin"><use href="#i-coin"/></svg><span id="goldTxt">0</span></span>
+        <span class="pill" title="Diamanter"><svg class="gemi"><use href="#i-gem"/></svg><span id="gemTxt">0</span></span>
         <span class="pill" title="Stjerner"><svg class="star"><use href="#i-star"/></svg><span id="starTxt">0</span></span>
       </div>
     </div>
-
     <div class="card">
-      <div class="dragon">
-        <canvas id="dragonCv" width="168" height="168" aria-label="Dragen Glimt"></canvas>
+      <div class="hero">
+        <canvas id="heroCv" width="192" height="192" aria-label="Dronningen og dragen Glimt"></canvas>
         <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
           <div class="spread"><b id="queenTxt">Dronning</b><button class="link" id="soundBtn">Lyd på</button></div>
           <span class="small muted" id="dragonTxt">Glimt er fortsatt et egg.</span>
@@ -247,29 +265,58 @@
         </div>
       </div>
       <div class="menu">
-        <button class="btn" id="shopBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 27V13l4-4 4 4v-3h4v3l4-4 4 4v14z" fill="#E8D9FF" stroke="#7C5CFF" stroke-width="2" stroke-linejoin="round"/><path d="M13 27v-6h6v6" fill="#7C5CFF"/></svg>Verksted</button>
+        <button class="btn" id="shopBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 12l3-6h18l3 6z" fill="#FF5FA2"/><path d="M6 12h20v14H6z" fill="#FFE9F3" stroke="#FF5FA2" stroke-width="2"/><path d="M13 26v-7h6v7" fill="#FF5FA2"/></svg>Butikk</button>
+        <button class="btn" id="quickBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 27V13l4-4 4 4v-3h4v3l4-4 4 4v14z" fill="#E8D9FF" stroke="#7C5CFF" stroke-width="2" stroke-linejoin="round"/><path d="M13 27v-6h6v6" fill="#7C5CFF"/></svg>Rask kamp</button>
         <button class="btn" id="forgeBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 20h18l4-6H9z" fill="#C9C2D9" stroke="#2B2350" stroke-width="2" stroke-linejoin="round"/><path d="M10 20v6h12v-6" fill="#8E86A8" stroke="#2B2350" stroke-width="2"/><path d="M16 4c3 4-2 5 1 9" stroke="#FF8A3D" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>Smia</button>
-        <button class="btn" id="starmapBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="10" height="10" rx="2" fill="#1FA866"/><rect x="18" y="4" width="10" height="10" rx="2" fill="#FFF0C2" stroke="#E4DAF7"/><rect x="4" y="18" width="10" height="10" rx="2" fill="#1FA866"/><rect x="18" y="18" width="10" height="10" rx="2" fill="#1FA866"/></svg>Stjernekart</button>
+        <button class="btn" id="starmapBtn"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="10" height="10" rx="2" fill="#1FA866"/><rect x="18" y="4" width="10" height="10" rx="2" fill="#FFF0C2" stroke="#E4DAF7"/><rect x="4" y="18" width="10" height="10" rx="2" fill="#1FA866"/><rect x="18" y="18" width="10" height="10" rx="2" fill="#1FA866"/></svg>Stjerner</button>
       </div>
     </div>
-
     <div class="card quest">
       <div style="display:flex;flex-direction:column;gap:6px">
         <b>Dagens oppdrag</b>
-        <span class="small muted" id="questTxt">Vinn 3 kamper i dag.</span>
+        <span class="small muted" id="questTxt">Fullfør 3 reiser eller kamper i dag.</span>
         <div class="dots7" id="week" aria-label="Dager du har spilt denne uka"></div>
       </div>
       <button class="btn gold" id="claimBtn" disabled>+30</button>
     </div>
-
     <div id="kingdoms" style="display:flex;flex-direction:column;gap:14px"></div>
+  </section>
+
+  <!-- ================= JOURNEY ================= -->
+  <section id="vJourney" hidden style="display:flex;flex-direction:column;gap:8px">
+    <div class="jtop">
+      <button class="link" id="jQuit">Pause</button>
+      <div class="hearts" id="jHearts" aria-label="Hjerter"></div>
+      <div class="row" style="gap:5px">
+        <span class="pill"><svg class="coin"><use href="#i-coin"/></svg><span id="jGold">0</span></span>
+        <span class="pill"><svg class="gemi"><use href="#i-gem"/></svg><span id="jGems">0</span></span>
+      </div>
+    </div>
+    <div class="scene"><canvas id="jCv" width="800" height="420"></canvas></div>
+    <div class="panel" id="jPanel">
+      <div class="spread"><h3 id="encTitle">På vei</h3><button class="btn" id="potionBtn" hidden style="padding:4px 10px;font-size:14px">Hjertedrikk</button></div>
+      <p class="small muted" id="encText">Dronningen går gjennom riket.</p>
+      <div class="prog" id="encProg"></div>
+      <div class="timer" id="encTimer" hidden><div id="encTimerFill" style="width:100%"></div></div>
+      <div class="qbox" id="jqbox" hidden><span class="qtext" id="jqtext"></span><span class="qans empty" id="jqans">?</span></div>
+      <div class="qmsg" id="jmsg" aria-live="polite"></div>
+      <div class="choices" id="choices" hidden></div>
+      <div class="market" id="market" hidden></div>
+      <button class="btn pink big" id="encBtn" hidden>Gå videre</button>
+    </div>
+    <div class="pad" id="jpad" hidden>
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button data-k="del" class="del" aria-label="Slett">⌫</button><button data-k="0">0</button><button data-k="ok" class="ok">OK</button>
+    </div>
   </section>
 
   <!-- ================= BATTLE ================= -->
   <section id="vBattle" hidden style="display:flex;flex-direction:column;gap:9px">
     <div class="bhead">
       <div class="hp left"><b id="myName">Ditt slott</b><div class="hpbar"><div id="myHp" style="width:100%"></div></div></div>
-      <button class="link" id="pauseBtn" aria-label="Pause">Pause</button>
+      <button class="link" id="pauseBtn">Pause</button>
       <div class="hp right"><b id="foeName">Kaptein Gnurr</b><div class="hpbar"><div id="foeHp" style="width:100%"></div></div><div class="charge" title="Fienden lader"><div id="foeCharge"></div></div></div>
     </div>
     <div class="scene">
@@ -285,7 +332,7 @@
       <button data-ammo="fire" aria-pressed="false"><i style="background:radial-gradient(circle,#FFE066,#FF6B2C)"></i>Ildkule<small>vanskelig · 18</small></button>
       <button data-ammo="rainbow" aria-pressed="false"><i style="background:conic-gradient(#FF5FA2,#FFB627,#3CC9A0,#4DA3FF,#7C5CFF,#FF5FA2)"></i>Regnbuepil<small>to steg · 30</small></button>
     </div>
-    <div class="qbox" id="qbox"><span class="qtext" id="qtext">2 × 5 =</span><span class="qans empty" id="qans">?</span></div>
+    <div class="qbox" id="qbox"><span class="qtext" id="qtext">Klar?</span><span class="qans empty" id="qans"></span></div>
     <div class="qmsg" id="qmsg" aria-live="polite"></div>
     <div class="pad" id="pad">
       <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
@@ -295,23 +342,26 @@
     </div>
   </section>
 
-  <!-- ================= WORKSHOP ================= -->
-  <section id="vShop" hidden style="display:flex;flex-direction:column;gap:14px">
-    <div class="top"><button class="link" data-back>← Kart</button><span class="pill"><svg class="coin"><use href="#i-coin"/></svg><span id="goldTxt2">0</span></span></div>
-    <div class="card">
-      <h2>Slottsverkstedet</h2>
-      <div class="preview"><canvas id="previewCv" width="400" height="220" aria-label="Slottet ditt"></canvas></div>
-      <div class="shop" id="upgrades"></div>
+  <!-- ================= SHOP ================= -->
+  <section id="vShop" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="top">
+      <button class="link" data-back>← Kart</button>
+      <div class="row" style="gap:6px">
+        <span class="pill"><svg class="coin"><use href="#i-coin"/></svg><span id="sGold">0</span></span>
+        <span class="pill"><svg class="gemi"><use href="#i-gem"/></svg><span id="sGems">0</span></span>
+      </div>
     </div>
-    <div class="card">
-      <h3>Flaggfarge</h3>
-      <div class="swatches" id="flagSw"></div>
-      <h3>Takfarge</h3>
-      <div class="swatches" id="roofSw"></div>
-      <h3>Murfarge</h3>
-      <div class="swatches" id="wallSw"></div>
-      <p class="small muted">En ny farge koster 25 gull. Farger du har kjøpt, kan du bytte til gratis.</p>
+    <div class="card" style="padding:12px">
+      <div class="preview"><canvas id="previewCv" width="800" height="460" aria-label="Slottet, dronningen, Glimt og kjæledyret ditt"></canvas></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="slott" aria-selected="true">Slott</button>
+        <button role="tab" data-tab="dronning" aria-selected="false">Dronning</button>
+        <button role="tab" data-tab="glimt" aria-selected="false">Glimt</button>
+        <button role="tab" data-tab="dyr" aria-selected="false">Dyr</button>
+        <button role="tab" data-tab="utstyr" aria-selected="false">Utstyr</button>
+      </div>
     </div>
+    <div id="shopBody" style="display:flex;flex-direction:column;gap:12px"></div>
   </section>
 
   <!-- ================= FORGE ================= -->
@@ -352,8 +402,11 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const hash = i => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
+  const icon = (id, cls) => `<svg class="${cls}" viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
   const starSvg = (on, cls = '') => `<svg class="${on ? 'star' : 'off'} ${cls}" viewBox="0 0 24 24"><use href="#i-star"/></svg>`;
   const dateKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
@@ -362,11 +415,21 @@
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
-  const FRESH = { v: 1, gold: 0, xp: 0, levels: {}, up: { wall: 0, cata: 0, shield: 0 }, flag: '#FF5FA2', roof: '#7C5CFF', wall: '#EBDDFF', owned: ['#FF5FA2', '#7C5CFF', '#EBDDFF'], daily: { date: '', wins: 0, claimed: false }, days: [], times: [], name: '', sound: true, intro: false, freed: [] };
-  const save = Object.assign({}, FRESH, ls.get('wc-save', {}));
-  save.up = Object.assign({ wall: 0, cata: 0, shield: 0 }, save.up);
+  const FRESH = {
+    v: 2, gold: 0, gems: 0, xp: 0, levels: {}, up: { wall: 0, cata: 0, shield: 0 },
+    flag: '#FF5FA2', roof: '#7C5CFF', wall: '#EBDDFF', owned: ['#FF5FA2', '#7C5CFF', '#EBDDFF'],
+    wear: { dress: '#FF8FC7', hair: '#6B3E26', crown: 'gold', cape: false, wand: false, dcolor: 'mint', dacc: '', pet: '' },
+    deco: {}, items: [], bag: { potion: 0, clover: 0, amulet: 0 },
+    daily: { date: '', wins: 0, claimed: false }, days: [], times: [], name: '', sound: true, intro: false, freed: []
+  };
+  const stored = ls.get('wc-save', {}) || {};
+  const save = Object.assign({}, FRESH, stored);
+  save.up = Object.assign({}, FRESH.up, save.up);
+  save.wear = Object.assign({}, FRESH.wear, save.wear);
+  save.bag = Object.assign({}, FRESH.bag, save.bag);
+  save.deco = save.deco || {};
+  save.items = save.items || [];
   if (!save.migrated) {
-    // stars earned in the old Gangemester game become starting gold
     save.gold += Math.min(300, Math.max(0, +ls.get('gm-stars', 0) || 0));
     if (!save.name) save.name = ls.get('gm-name', '') || '';
     save.migrated = true;
@@ -386,31 +449,47 @@
     if (!save.days.includes(t)) { save.days.push(t); save.days = save.days.slice(-60); }
   }
   touchDay(); persist();
+  const owns = id => save.items.includes(id);
 
   // ================= world =================
   const COMMANDERS = ['Kaptein Gnurr', 'Baronesse Grå', 'Ridder Rusk', 'Hertug Hutte', 'Fru Tåkeflekk', 'Sersjant Surmule', 'Greve Gråvær', 'Junker Jammer', 'Lady Lunte'];
   const KINGDOMS = [
-    { id: 'k1', name: 'Engriket', sub: 'Blomsterenger og sommerfugler', tables: [2, 5, 10], review: [1], colors: ['#7ED67A', '#FFD86B', '#FF8FC7'], sky: ['#BFE6FF', '#FFE6F3'], grass: '#8EE08A', rock: '#C8A8E8', boss: 'Kjempen Bram', bossName: 'Bram ved broa', gate: 12,
-      levels: ['Tusenfrydporten', 'Bikubebakken', 'Sommerfuglbekken', 'Jordbærhagen', 'Vindmølla', 'Kløverkollen', 'Regnbuedammen'] },
-    { id: 'k2', name: 'Skogriket', sub: 'Sopphus og lysende ugler', tables: [3, 4], review: [2, 5, 10], colors: ['#3CC9A0', '#B6E36B', '#7C5CFF'], sky: ['#C9F1E4', '#E9E2FF'], grass: '#5FCB8F', rock: '#A98FD1', boss: 'Skogtrollet Mose', bossName: 'Mose i mørkeskogen', gate: 12,
-      levels: ['Sopphusstien', 'Ugleeika', 'Bregnebrua', 'Ekornkroa', 'Blåbærlia', 'Lysmarkstjernet', 'Mosegrotta'] },
-    { id: 'k3', name: 'Fjellriket', sub: 'Snøtopper og krystallhuler', tables: [6, 7], colors: ['#8FB8FF', '#E1ECFF', '#7C5CFF'], soon: 'tårnforsvar, der fiendene bærer svaret på skjoldet' },
-    { id: 'k4', name: 'Dragedalen', sub: 'Vulkaner og drageegg', tables: [8, 9], colors: ['#FF8A5B', '#FFC93C', '#FF5FA2'], soon: 'skattkammeret, der du finner tallet som mangler' },
-    { id: 'k5', name: 'Skyggefestningen', sub: 'Der Skyggebaronen bor', tables: [], colors: ['#5B4A86', '#2B2350', '#FF5FA2'], soon: 'den store finalen mot Skyggebaronen' }
+    { id: 'k1', theme: 'meadow', name: 'Engriket', sub: 'Blomsterenger og sommerfugler', tables: [2, 5, 10], review: [1], colors: ['#7ED67A', '#FFD86B', '#FF8FC7'], sky: ['#BFE6FF', '#FFE6F3'], grass: '#8EE08A', rock: '#C8A8E8', boss: 'Kjempen Bram', bossName: 'Bram ved broa',
+      stages: ['Tusenfrydporten', 'Bikubebakken', 'Sommerfuglbekken', 'Jordbærhagen', 'Vindmølla', 'Kløverkollen', 'Regnbuedammen'] },
+    { id: 'k2', theme: 'forest', name: 'Skogriket', sub: 'Sopphus og lysende ugler', tables: [3, 4], review: [2, 5, 10], colors: ['#3CC9A0', '#B6E36B', '#7C5CFF'], sky: ['#C9F1E4', '#E9E2FF'], grass: '#5FCB8F', rock: '#A98FD1', boss: 'Skogtrollet Mose', bossName: 'Mose i mørkeskogen',
+      stages: ['Sopphusstien', 'Ugleeika', 'Bregnebrua', 'Ekornkroa', 'Blåbærlia', 'Lysmarkstjernet', 'Mosegrotta'] },
+    { id: 'k3', theme: 'mountain', name: 'Fjellriket', sub: 'Snøtopper og krystallhuler', tables: [6, 7], review: [3, 4, 5], colors: ['#8FB8FF', '#E1ECFF', '#7C5CFF'], sky: ['#D6E9FF', '#F3EEFF'], grass: '#E8F3FF', rock: '#9DB3D9', boss: 'Isjarlen Frost', bossName: 'Frost på isbreen',
+      stages: ['Snøfnuggstien', 'Krystallgrotta', 'Geitebakken', 'Isbrua', 'Nordlysvarden', 'Snøballskaret', 'Fjelltoppen'] },
+    { id: 'k4', theme: 'volcano', name: 'Dragedalen', sub: 'Vulkaner og drageegg', tables: [8, 9], review: [6, 7, 4], colors: ['#FF8A5B', '#FFC93C', '#FF5FA2'], sky: ['#FFE0CC', '#FFE9F3'], grass: '#C9A27A', rock: '#B9837A', boss: 'Lavakjempen Glo', bossName: 'Glo i vulkanen',
+      stages: ['Varme kilder', 'Drageredet', 'Askestien', 'Lavabekken', 'Glødesteinene', 'Røykskogen', 'Vulkanporten'] },
+    { id: 'k5', theme: 'shadow', name: 'Skyggefestningen', sub: 'Der Skyggebaronen bor', tables: [6, 7, 8, 9], review: [2, 3, 4, 5], colors: ['#5B4A86', '#8E7BB8', '#FF5FA2'], sky: ['#D9D2EE', '#F2DDEB'], grass: '#8E86A8', rock: '#6E6690', boss: 'Skyggebaronen', bossName: 'Skyggebaronen',
+      stages: ['Tåkemyra', 'Grå hage', 'Ekkobrua', 'Spøkelsestårnet', 'Speilsalen', 'Torneportene', 'Tronsalen'] }
   ];
+  const TEMPLATES = [
+    ['walk', 'stones', 'walk', 'chest', 'walk', 'treasure'],
+    ['walk', 'sprite', 'walk', 'bridge', 'walk', 'merchant', 'walk', 'castle'],
+    ['walk', 'chest', 'walk', 'stones', 'walk', 'sprite', 'walk', 'treasure'],
+    ['walk', 'bridge', 'walk', 'merchant', 'walk', 'sprite', 'walk', 'castle'],
+    ['walk', 'stones', 'walk', 'chest', 'walk', 'bridge', 'walk', 'treasure'],
+    ['walk', 'sprite', 'walk', 'merchant', 'walk', 'stones', 'walk', 'castle'],
+    ['walk', 'chest', 'walk', 'bridge', 'walk', 'sprite', 'walk', 'treasure']
+  ];
+  const BOSS_TEMPLATE = ['walk', 'sprite', 'walk', 'merchant', 'walk', 'bridge', 'walk', 'chest', 'walk', 'castle'];
+  const ENC_NAMES = { stones: 'Steinsprang', chest: 'Skattkiste', bridge: 'Trollbrua', sprite: 'Skyggevette', merchant: 'Handelskvinne', treasure: 'Skatt', castle: 'Slottskamp' };
   KINGDOMS.forEach((k, ki) => {
-    if (!k.levels) return;
-    k.list = k.levels.map((name, i) => ({
-      id: k.id + '-' + (i + 1), n: i + 1, name, kingdom: k, ki, boss: false,
+    k.ki = ki;
+    k.list = k.stages.map((name, i) => ({
+      id: k.id + '-' + (i + 1), n: i + 1, name, kingdom: k, ki, boss: false, steps: TEMPLATES[i],
       enemy: COMMANDERS[(i * 2 + ki * 3) % COMMANDERS.length],
       hp: 70 + (i + 1) * 9 + ki * 25, rate: 2.7 - i * 0.09 - ki * 0.15, dmg: 13 + i + ki * 3
     }));
-    k.list.push({ id: k.id + '-boss', n: 8, name: k.bossName, kingdom: k, ki, boss: true, enemy: k.boss, hp: 210 + ki * 50, rate: 1.95 - ki * 0.1, dmg: 19 + ki * 3 });
+    k.list.push({ id: k.id + '-boss', n: 8, name: k.bossName, kingdom: k, ki, boss: true, steps: BOSS_TEMPLATE, enemy: k.boss, hp: 210 + ki * 50, rate: 1.95 - ki * 0.1, dmg: 19 + ki * 3 });
+    k.gate = 12;
   });
   const starsOf = id => (save.levels[id] && save.levels[id].stars) || 0;
-  const kingdomStars = k => (k.list || []).filter(l => !l.boss).reduce((s, l) => s + starsOf(l.id), 0);
+  const kingdomStars = k => k.list.filter(l => !l.boss).reduce((s, l) => s + starsOf(l.id), 0);
   const totalStars = () => Object.values(save.levels).reduce((s, l) => s + (l.stars || 0), 0);
-  function kingdomOpen(ki) { return ki === 0 || (!!KINGDOMS[ki].list && starsOf(KINGDOMS[ki - 1].id + '-boss') > 0); }
+  const kingdomOpen = ki => ki === 0 || starsOf(KINGDOMS[ki - 1].id + '-boss') > 0;
   function levelOpen(l) {
     if (!kingdomOpen(l.ki)) return false;
     const list = l.kingdom.list;
@@ -418,9 +497,21 @@
     return l.n === 1 || starsOf(list[l.n - 2].id) > 0;
   }
 
-  // ================= dragon =================
+  // ================= dragon + shop data =================
   const STAGES = [[0, 'Egg', 'Glimt er fortsatt et egg. Svar riktig for å klekke det.'], [40, 'Nyklekket', 'Glimt har klekket! Ennå for liten til å hjelpe i kamp.'], [150, 'Dragebaby', 'Glimt hjelper deg i kamp med ildpust.'], [400, 'Ungdrage', 'Glimt puster sterkere ild.'], [900, 'Storedrage', 'Glimt er en mektig drage!']];
   const stageOf = xp => { let s = 0; STAGES.forEach((st, i) => { if (xp >= st[0]) s = i; }); return s; };
+  const DCOLORS = { mint: ['#7FE0C3', '#5ED3B0', '#E9FFF7', '#FF9BC8'], pink: ['#FF9BC8', '#FF7AB6', '#FFF0F7', '#7FE0C3'], lilac: ['#C3A8FF', '#A88BFF', '#F4EEFF', '#FFD86B'], sky: ['#8FCBFF', '#6BB5FF', '#EEF7FF', '#FF9BC8'], gold: ['#FFD24D', '#F5B800', '#FFF7D6', '#FF5FA2'] };
+  const PETS = {
+    cat: { name: 'Katten Pus', desc: 'Finner 2 ekstra gull ved hver utfordring på reisen.', price: 80, cur: 'gold' },
+    owl: { name: 'Uglen Ugo', desc: 'Fjerner ett feil svar i steinsprang og gir hint i skattkister.', price: 120, cur: 'gold' },
+    bunny: { name: 'Kaninen Kløver', desc: 'Gir deg 4 hjerter i stedet for 3 på reisen.', price: 100, cur: 'gold' },
+    fox: { name: 'Reven Rubin', desc: 'Katapulten gjør 15 % mer skade i slottskamper.', price: 5, cur: 'gem' }
+  };
+  const BAG = {
+    potion: { name: 'Hjertedrikk', desc: 'Får tilbake ett hjerte på reisen.', price: 20, max: 3 },
+    clover: { name: 'Firkløver', desc: 'Dobbelt gull på neste reise.', price: 30, max: 2 },
+    amulet: { name: 'Skjoldamulett', desc: 'Start neste slottskamp med magisk skjold.', price: 25, max: 3 }
+  };
 
   // ================= sound =================
   let ac = null;
@@ -457,21 +548,28 @@
     shield: () => tone([523, 784, 1046], 'sine', 0.12, 0.07),
     win: () => tone([523, 659, 784, 1046, 1318], 'triangle', 0.16, 0.1),
     lose: () => tone([392, 330, 262, 196], 'triangle', 0.22, 0.09),
-    coin: () => tone([988, 1318], 'square', 0.07, 0.04),
+    coin: () => tone([988, 1318], 'square', 0.06, 0.035),
+    gem: () => tone([1318, 1760, 2093], 'sine', 0.09, 0.06),
+    hop: () => tone([440, 660], 'sine', 0.08, 0.06),
+    splash: () => { thud(0.2); tone([200, 150], 'sine', 0.2, 0.05); },
     dragon: () => tone([200, 300, 450, 700], 'sawtooth', 0.09, 0.04, 0.6)
   };
   function renderSound() { $('soundBtn').textContent = save.sound ? 'Lyd på' : 'Lyd av'; }
   $('soundBtn').addEventListener('click', () => { save.sound = !save.sound; persist(); renderSound(); });
 
   // ================= drawing =================
+  const RAINBOW = ['#FF5FA2', '#FFB627', '#3CC9A0', '#4DA3FF', '#7C5CFF'];
   function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   function shade(hex, k) {
     const n = parseInt(hex.slice(1), 16);
     const r = clamp(Math.round((n >> 16) * k), 0, 255), g = clamp(Math.round(((n >> 8) & 255) * k), 0, 255), b = clamp(Math.round((n & 255) * k), 0, 255);
     return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
   }
-
-  // castle = wall with two towers made of blocks; blocks fall in a shuffled order as health drops
+  function star5(c, x, y, r, fill) {
+    c.fillStyle = fill; c.beginPath();
+    for (let i = 0; i < 10; i++) { const rad = i % 2 ? r * 0.45 : r, a = -Math.PI / 2 + i * Math.PI / 5; c.lineTo(x + Math.cos(a) * rad, y + Math.sin(a) * rad); }
+    c.closePath(); c.fill();
+  }
   const BS = 18;
   const BLOCKS = (() => {
     const out = [];
@@ -486,8 +584,12 @@
     idx.sort((a, b) => (BLOCKS[b][1] - BLOCKS[a][1]) + rnd(-3, 3));
     return idx;
   }
-  function drawCastle(c, cx, baseY, pal, broken, mood, facing) {
+  function drawCastle(c, cx, baseY, pal, broken, mood, facing, deco) {
     const x0 = cx - 4 * BS;
+    if (deco && deco.rainbow) {
+      RAINBOW.forEach((col, i) => { c.strokeStyle = col; c.lineWidth = 7; c.globalAlpha = 0.75; c.beginPath(); c.arc(cx, baseY, 175 - i * 7, Math.PI * 1.08, Math.PI * 1.92); c.stroke(); });
+      c.globalAlpha = 1;
+    }
     BLOCKS.forEach(([col, row], i) => {
       if (broken && broken.has(i)) return;
       const x = x0 + col * BS, y = baseY - (row + 1) * BS;
@@ -495,7 +597,7 @@
       rr(c, x + 0.5, y + 0.5, BS - 1, BS - 1, 4); c.fill();
       c.strokeStyle = shade(pal.wall, 0.78); c.lineWidth = 1.2; c.stroke();
     });
-    // tower roofs with flags (a roof falls when the block under it is gone)
+    const tips = [];
     [[-1, -1], [7, 8]].forEach(([col, outer]) => {
       const topBlock = BLOCKS.findIndex(b => b[0] === outer && b[1] === 7);
       if (broken && broken.has(topBlock)) return;
@@ -504,17 +606,25 @@
       c.beginPath(); c.moveTo(x - 6, y); c.lineTo(x + BS, y - 52); c.lineTo(x + 2 * BS + 6, y); c.closePath(); c.fill();
       c.strokeStyle = shade(pal.roof, 0.75); c.lineWidth = 2; c.stroke();
       const fx = x + BS, fy = y - 52;
+      tips.push([fx, y - 20]);
       c.strokeStyle = '#6E6690'; c.lineWidth = 2;
       c.beginPath(); c.moveTo(fx, fy); c.lineTo(fx, fy - 22); c.stroke();
       const wave = Math.sin(performance.now() / 300 + cx) * 3;
       c.fillStyle = pal.flag;
       c.beginPath(); c.moveTo(fx, fy - 22); c.quadraticCurveTo(fx + 10 * facing, fy - 22 + wave, fx + 20 * facing, fy - 17); c.lineTo(fx, fy - 12); c.closePath(); c.fill();
     });
-    // gate and windows
+    if (deco && deco.bunting && tips.length === 2) {
+      const [a, b] = tips;
+      c.strokeStyle = '#6E6690'; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo(cx, a[1] + 30, b[0], b[1]); c.stroke();
+      for (let i = 1; i < 9; i++) {
+        const t = i / 9, x = lerp(a[0], b[0], t), y = (1 - t) * (1 - t) * a[1] + 2 * (1 - t) * t * (a[1] + 30) + t * t * b[1];
+        c.fillStyle = RAINBOW[i % 5]; c.beginPath(); c.moveTo(x - 5, y); c.lineTo(x + 5, y); c.lineTo(x, y + 10); c.closePath(); c.fill();
+      }
+    }
     c.fillStyle = shade(pal.wall, 0.45);
     c.beginPath(); c.moveTo(cx - 16, baseY); c.lineTo(cx - 16, baseY - 22); c.arc(cx, baseY - 22, 16, Math.PI, 0); c.lineTo(cx + 16, baseY); c.closePath(); c.fill();
     for (const col of [-1, 8]) { rr(c, x0 + col * BS + 5, baseY - 6.4 * BS, 8, 13, 4); c.fill(); }
-    // face
     const fy = baseY - 3.4 * BS;
     c.fillStyle = '#2B2350'; c.strokeStyle = '#2B2350'; c.lineCap = 'round';
     if (mood === 'happy') {
@@ -529,6 +639,28 @@
       if (mood === 'grumpy') { c.moveTo(cx - 32, fy - 12); c.lineTo(cx - 14, fy - 7); c.moveTo(cx + 32, fy - 12); c.lineTo(cx + 14, fy - 7); }
       else { c.moveTo(cx - 30, fy - 9); c.lineTo(cx - 15, fy - 13); c.moveTo(cx + 30, fy - 9); c.lineTo(cx + 15, fy - 13); }
       c.stroke();
+    }
+    if (deco && deco.garden) {
+      for (let i = 0; i < 9; i++) {
+        const x = x0 - 14 + i * 21; if (Math.abs(x - cx) < 22) continue;
+        c.strokeStyle = '#3CA35A'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, baseY); c.lineTo(x, baseY - 10); c.stroke();
+        c.fillStyle = ['#FF5FA2', '#FFD86B', '#FFFFFF', '#7C5CFF'][i % 4]; c.beginPath(); c.arc(x, baseY - 12, 4.5, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#FFB627'; c.beginPath(); c.arc(x, baseY - 12, 1.8, 0, Math.PI * 2); c.fill();
+      }
+    }
+    if (deco && deco.moat) {
+      const dx = Math.sin(performance.now() / 900) * 12;
+      c.fillStyle = '#7CC8FF'; c.beginPath(); c.ellipse(cx - 118, baseY + 4, 30, 7, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFD86B'; c.beginPath(); c.ellipse(cx - 118 + dx, baseY - 1, 6, 4, 0, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(cx - 113 + dx, baseY - 6, 3.5, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FF8A3D'; c.fillRect(cx - 110 + dx, baseY - 7, 3, 2);
+    }
+    if (deco && deco.statue) {
+      c.fillStyle = '#B9B3C9'; rr(c, cx + 88, baseY - 10, 26, 10, 3); c.fill();
+      c.save(); c.translate(cx + 101, baseY - 22); c.scale(0.45, 0.45);
+      c.fillStyle = '#C9C3D9'; c.beginPath(); c.ellipse(0, 6, 18, 16, 0, 0, Math.PI * 2); c.fill(); c.beginPath(); c.arc(12, -14, 15, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.moveTo(-6, -10); c.lineTo(-34, -28); c.lineTo(-20, 4); c.closePath(); c.fill();
+      c.restore();
     }
   }
   function drawIsland(c, cx, topY, grass, rock, seed) {
@@ -549,7 +681,6 @@
       c.beginPath(); c.arc(fx, topY - 2 + (i % 2) * 4, 3, 0, Math.PI * 2); c.fill();
     }
   }
-  // facing 1 = shoots to the right
   function drawCatapult(c, x, y, facing, swing) {
     c.fillStyle = '#B07A4A'; rr(c, x - 22, y - 14, 44, 10, 4); c.fill();
     c.fillStyle = '#7A4E2A';
@@ -561,28 +692,31 @@
     c.fillStyle = '#5E3B1F'; c.beginPath(); c.arc(-30, -16, 6, 0, Math.PI * 2); c.fill();
     c.restore();
   }
-  function drawDragon(c, x, y, stage, t, scale = 1) {
+  function drawDragon(c, x, y, stage, t, scale = 1, look) {
+    look = look || { color: save.wear.dcolor, acc: save.wear.dacc };
+    const col = DCOLORS[look.color] || DCOLORS.mint;
     c.save(); c.translate(x, y); c.scale(scale, scale);
     if (stage === 0) {
       c.rotate(Math.sin(t * 3) * 0.12);
       c.fillStyle = '#FFF4DC'; c.strokeStyle = '#E5C98F'; c.lineWidth = 2;
       c.beginPath(); c.ellipse(0, 0, 18, 24, 0, 0, Math.PI * 2); c.fill(); c.stroke();
-      c.fillStyle = '#FF9BC8';
+      c.fillStyle = col[3];
       [[-7, -8, 4], [6, 2, 5], [-4, 11, 3], [9, -12, 3]].forEach(([a, b, r]) => { c.beginPath(); c.arc(a, b, r, 0, Math.PI * 2); c.fill(); });
       c.restore(); return;
     }
     const s = [0, 0.6, 0.8, 1, 1.25][stage];
     c.scale(s, s);
     const flap = Math.sin(t * 8) * 0.5;
-    c.fillStyle = '#FF9BC8';
+    c.fillStyle = col[3];
     c.save(); c.translate(-6, -10); c.rotate(-0.6 + flap); c.beginPath(); c.moveTo(0, 0); c.lineTo(-30, -18); c.lineTo(-22, 2); c.lineTo(-12, 6); c.closePath(); c.fill(); c.restore();
     c.save(); c.translate(6, -10); c.rotate(0.6 - flap); c.beginPath(); c.moveTo(0, 0); c.lineTo(30, -18); c.lineTo(22, 2); c.lineTo(12, 6); c.closePath(); c.fill(); c.restore();
-    c.strokeStyle = '#5ED3B0'; c.lineWidth = 7; c.lineCap = 'round';
+    c.strokeStyle = col[1]; c.lineWidth = 7; c.lineCap = 'round';
     c.beginPath(); c.moveTo(-10, 12); c.quadraticCurveTo(-30, 20, -34, 6); c.stroke();
-    c.fillStyle = '#FF9BC8'; c.beginPath(); c.moveTo(-34, 6); c.lineTo(-42, 0); c.lineTo(-36, 12); c.closePath(); c.fill();
-    c.fillStyle = '#7FE0C3'; c.beginPath(); c.ellipse(0, 6, 18, 16, 0, 0, Math.PI * 2); c.fill();
-    c.fillStyle = '#E9FFF7'; c.beginPath(); c.ellipse(2, 10, 10, 10, 0, 0, Math.PI * 2); c.fill();
-    c.fillStyle = '#7FE0C3'; c.beginPath(); c.arc(12, -14, 15, 0, Math.PI * 2); c.fill();
+    c.fillStyle = col[3]; c.beginPath(); c.moveTo(-34, 6); c.lineTo(-42, 0); c.lineTo(-36, 12); c.closePath(); c.fill();
+    c.fillStyle = col[0]; c.beginPath(); c.ellipse(0, 6, 18, 16, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = col[2]; c.beginPath(); c.ellipse(2, 10, 10, 10, 0, 0, Math.PI * 2); c.fill();
+    if (look.acc === 'scarf') { c.fillStyle = '#F0566B'; rr(c, -2, -6, 24, 7, 3); c.fill(); c.fillRect(2, -1, 6, 12); }
+    c.fillStyle = col[0]; c.beginPath(); c.arc(12, -14, 15, 0, Math.PI * 2); c.fill();
     c.fillStyle = '#FFD86B';
     c.beginPath(); c.moveTo(4, -26); c.lineTo(2, -38); c.lineTo(10, -28); c.closePath(); c.fill();
     c.beginPath(); c.moveTo(14, -28); c.lineTo(18, -40); c.lineTo(21, -27); c.closePath(); c.fill();
@@ -590,6 +724,81 @@
     c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(10, -16.5, 1.5, 0, Math.PI * 2); c.arc(20, -16.5, 1.5, 0, Math.PI * 2); c.fill();
     c.fillStyle = 'rgba(255,95,162,0.45)'; c.beginPath(); c.ellipse(4, -8, 4, 2.5, 0, 0, Math.PI * 2); c.ellipse(24, -8, 4, 2.5, 0, 0, Math.PI * 2); c.fill();
     c.strokeStyle = '#2B2350'; c.lineWidth = 1.8; c.beginPath(); c.arc(14, -9, 3, 0.2, Math.PI - 0.2); c.stroke();
+    if (look.acc === 'bow') { c.fillStyle = '#FF5FA2'; c.beginPath(); c.moveTo(0, -26); c.lineTo(-9, -32); c.lineTo(-9, -20); c.closePath(); c.moveTo(0, -26); c.lineTo(9, -32); c.lineTo(9, -20); c.closePath(); c.fill(); c.beginPath(); c.arc(0, -26, 3, 0, Math.PI * 2); c.fill(); }
+    if (look.acc === 'hat') { c.fillStyle = '#7C5CFF'; c.beginPath(); c.moveTo(4, -27); c.lineTo(14, -52); c.lineTo(22, -26); c.closePath(); c.fill(); c.fillStyle = '#FFD86B'; c.beginPath(); c.arc(14, -52, 3.5, 0, Math.PI * 2); c.fill(); }
+    if (look.acc === 'glasses') { c.fillStyle = '#2B2350'; rr(c, 3, -19, 10, 7, 3); c.fill(); rr(c, 15, -19, 10, 7, 3); c.fill(); c.fillRect(12, -17, 4, 2); }
+    if (look.acc === 'crown') { c.fillStyle = '#FFC93C'; c.beginPath(); c.moveTo(3, -27); c.lineTo(5, -38); c.lineTo(10, -31); c.lineTo(14, -40); c.lineTo(18, -31); c.lineTo(23, -38); c.lineTo(24, -27); c.closePath(); c.fill(); }
+    c.restore();
+  }
+  function drawQueen(c, x, y, t, walking, wear, scale = 1) {
+    wear = wear || save.wear;
+    c.save(); c.translate(x, y); c.scale(scale, scale);
+    const step = walking ? Math.sin(t * 11) : 0;
+    const bob = walking ? Math.abs(Math.sin(t * 11)) * 2.5 : Math.sin(t * 2) * 0.8;
+    c.translate(0, -bob);
+    if (wear.cape) {
+      c.fillStyle = shade(wear.dress, 0.62);
+      c.beginPath(); c.moveTo(-9, -46); c.quadraticCurveTo(-24, -22, -19 - step * 2, -6); c.lineTo(9, -8); c.lineTo(9, -46); c.closePath(); c.fill();
+    }
+    c.fillStyle = '#5B4A86';
+    rr(c, -7 + step * 3, -13, 5, 13, 2); c.fill();
+    rr(c, 2 - step * 3, -13, 5, 13, 2); c.fill();
+    c.fillStyle = wear.dress;
+    c.beginPath(); c.moveTo(-8, -46); c.lineTo(8, -46); c.lineTo(17, -11); c.quadraticCurveTo(0, -6, -17, -11); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.45)'; c.fillRect(-9, -33, 18, 3);
+    c.strokeStyle = '#FFD9C2'; c.lineWidth = 4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(-8, -42); c.lineTo(-14, -30 + step * 2); c.moveTo(8, -42); c.lineTo(14, -30 - step * 2); c.stroke();
+    if (wear.wand) {
+      c.strokeStyle = '#B07A4A'; c.lineWidth = 2.2; c.beginPath(); c.moveTo(14, -30 - step * 2); c.lineTo(22, -44 - step * 2); c.stroke();
+      star5(c, 23, -46 - step * 2, 6, '#FFD24D');
+    }
+    c.fillStyle = wear.hair;
+    c.beginPath(); c.arc(0, -58, 13.5, 0, Math.PI * 2); c.fill();
+    rr(c, -13.5, -60, 27, 22, 9); c.fill();
+    c.fillStyle = '#FFE1CF'; c.beginPath(); c.arc(0, -57, 11, 0, Math.PI * 2); c.fill();
+    c.fillStyle = wear.hair; c.beginPath(); c.arc(0, -62, 11.5, Math.PI * 1.02, Math.PI * 1.98); c.fill();
+    c.fillStyle = '#2B2350'; c.beginPath(); c.arc(-4, -56, 1.9, 0, Math.PI * 2); c.arc(4, -56, 1.9, 0, Math.PI * 2); c.fill();
+    c.fillStyle = 'rgba(255,95,162,0.4)'; c.beginPath(); c.ellipse(-7, -52, 2.6, 1.6, 0, 0, Math.PI * 2); c.ellipse(7, -52, 2.6, 1.6, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#2B2350'; c.lineWidth = 1.4; c.beginPath(); c.arc(0, -52.5, 2.6, 0.2, Math.PI - 0.2); c.stroke();
+    const cy = -70;
+    if (wear.crown === 'gold') { c.fillStyle = '#FFC93C'; c.beginPath(); c.moveTo(-8, cy + 4); c.lineTo(-8, cy - 4); c.lineTo(-4, cy); c.lineTo(0, cy - 6); c.lineTo(4, cy); c.lineTo(8, cy - 4); c.lineTo(8, cy + 4); c.closePath(); c.fill(); }
+    if (wear.crown === 'tiara') { c.strokeStyle = '#DDE3F0'; c.lineWidth = 3; c.beginPath(); c.arc(0, cy + 6, 9, Math.PI * 1.15, Math.PI * 1.85); c.stroke(); c.fillStyle = '#7CC8FF'; c.beginPath(); c.arc(0, cy - 3, 3, 0, Math.PI * 2); c.fill(); }
+    if (wear.crown === 'flowers') { ['#FF5FA2', '#FFD86B', '#FFFFFF', '#7C5CFF', '#FF5FA2'].forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.arc(-10 + i * 5, cy + 3 - Math.sin(i / 4 * Math.PI) * 3, 3.2, 0, Math.PI * 2); c.fill(); }); }
+    if (wear.crown === 'star') { c.fillStyle = '#FFC93C'; c.fillRect(-8, cy, 16, 4); star5(c, 0, cy - 5, 7, '#FFD24D'); }
+    c.restore();
+  }
+  function drawPet(c, kind, x, y, t, scale = 1) {
+    if (!kind) return;
+    c.save(); c.translate(x, y - Math.abs(Math.sin(t * 9)) * 3); c.scale(scale, scale);
+    if (kind === 'cat') {
+      c.strokeStyle = '#FF9F45'; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(-10, -8); c.quadraticCurveTo(-20, -16, -16, -26); c.stroke();
+      c.fillStyle = '#FFB061'; c.beginPath(); c.ellipse(0, -8, 11, 8, 0, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(9, -18, 8, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.moveTo(3, -23); c.lineTo(4, -31); c.lineTo(9, -25); c.closePath(); c.moveTo(11, -25); c.lineTo(15, -31); c.lineTo(16, -22); c.closePath(); c.fill();
+      c.fillStyle = '#2B2350'; c.beginPath(); c.arc(7, -18, 1.4, 0, Math.PI * 2); c.arc(12, -18, 1.4, 0, Math.PI * 2); c.fill();
+    } else if (kind === 'owl') {
+      c.translate(0, -28 + Math.sin(t * 5) * 4);
+      c.fillStyle = '#A9805C'; c.beginPath(); c.ellipse(0, 0, 10, 12, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(-4, -3, 4, 0, Math.PI * 2); c.arc(4, -3, 4, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#2B2350'; c.beginPath(); c.arc(-4, -3, 2, 0, Math.PI * 2); c.arc(4, -3, 2, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFB627'; c.beginPath(); c.moveTo(-2, 1); c.lineTo(2, 1); c.lineTo(0, 4); c.closePath(); c.fill();
+      c.fillStyle = '#8A6545'; c.beginPath(); c.moveTo(-8, -9); c.lineTo(-6, -15); c.lineTo(-3, -10); c.closePath(); c.moveTo(8, -9); c.lineTo(6, -15); c.lineTo(3, -10); c.closePath(); c.fill();
+    } else if (kind === 'bunny') {
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.ellipse(0, -8, 10, 8, 0, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(8, -16, 7, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(5, -30, 2.5, 8, -0.15, 0, Math.PI * 2); c.ellipse(11, -30, 2.5, 8, 0.15, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFB3D4'; c.beginPath(); c.ellipse(5, -30, 1.2, 5, -0.15, 0, Math.PI * 2); c.ellipse(11, -30, 1.2, 5, 0.15, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#2B2350'; c.beginPath(); c.arc(7, -17, 1.4, 0, Math.PI * 2); c.arc(11, -17, 1.4, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#E4DAF7'; c.lineWidth = 1; c.beginPath(); c.ellipse(0, -8, 10, 8, 0, 0, Math.PI * 2); c.stroke();
+    } else if (kind === 'fox') {
+      c.fillStyle = '#FF7A3D'; c.beginPath(); c.ellipse(-14, -12, 9, 5, -0.5, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(-20, -16, 3.5, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FF8A4D'; c.beginPath(); c.ellipse(0, -8, 11, 7, 0, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(9, -17, 7.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.moveTo(3, -21); c.lineTo(4, -30); c.lineTo(9, -23); c.closePath(); c.moveTo(11, -23); c.lineTo(16, -30); c.lineTo(15, -20); c.closePath(); c.fill();
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.ellipse(13, -14, 4, 3, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#2B2350'; c.beginPath(); c.arc(7, -18, 1.4, 0, Math.PI * 2); c.arc(12, -18, 1.4, 0, Math.PI * 2); c.fill();
+    }
     c.restore();
   }
   function drawSky(c, W, H, sky, t) {
@@ -602,32 +811,161 @@
       c.beginPath(); c.arc(x, y, 18, 0, Math.PI * 2); c.arc(x + 22, y - 8, 22, 0, Math.PI * 2); c.arc(x + 46, y, 17, 0, Math.PI * 2); c.fill();
     }
   }
+  // side-scrolling world for journeys; layers move at different speeds
+  const GROUND = 330;
+  function drawWorld(c, k, sx, t) {
+    drawSky(c, 800, 420, k.sky, t);
+    const th = k.theme;
+    const far = sx * 0.2;
+    if (th === 'mountain' || th === 'shadow' || th === 'volcano') {
+      for (let i = Math.floor(far / 260) - 1; i < Math.floor(far / 260) + 5; i++) {
+        const x = i * 260 - far, h = 120 + hash(i) * 90;
+        c.fillStyle = th === 'mountain' ? '#B9CBEA' : th === 'volcano' ? '#C79A8C' : '#A79BC6';
+        c.beginPath(); c.moveTo(x - 30, GROUND); c.lineTo(x + 110, GROUND - h); c.lineTo(x + 250, GROUND); c.closePath(); c.fill();
+        if (th === 'mountain') { c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(x + 110, GROUND - h); c.lineTo(x + 80, GROUND - h + 40); c.lineTo(x + 140, GROUND - h + 40); c.closePath(); c.fill(); }
+        if (th === 'volcano' && ((i % 3) + 3) % 3 === 0) { c.fillStyle = '#FF8A3D'; c.beginPath(); c.arc(x + 110, GROUND - h, 10 + Math.sin(t * 3) * 3, 0, Math.PI * 2); c.fill(); }
+        if (th === 'shadow' && ((i % 2) + 2) % 2 === 0) { c.fillStyle = '#7A6CA3'; c.fillRect(x + 100, GROUND - h - 40, 20, 50); c.beginPath(); c.moveTo(x + 96, GROUND - h - 40); c.lineTo(x + 110, GROUND - h - 64); c.lineTo(x + 124, GROUND - h - 40); c.closePath(); c.fill(); }
+      }
+    } else {
+      c.fillStyle = shade(k.grass, 0.92);
+      c.beginPath(); c.moveTo(0, GROUND);
+      for (let x = 0; x <= 800; x += 20) c.lineTo(x, GROUND - 60 - Math.sin((x + far) / 120) * 25 - Math.sin((x + far) / 47) * 8);
+      c.lineTo(800, GROUND); c.closePath(); c.fill();
+    }
+    const mid = sx * 0.55;
+    for (let i = Math.floor(mid / 120) - 1; i < Math.floor(mid / 120) + 9; i++) {
+      const x = i * 120 - mid + hash(i + 7) * 60, r = hash(i + 3);
+      if (th === 'meadow') {
+        c.fillStyle = '#9A6B44'; c.fillRect(x - 4, GROUND - 50, 8, 40);
+        c.fillStyle = shade(k.grass, 0.78 + r * 0.15); c.beginPath(); c.arc(x, GROUND - 64, 26 + r * 10, 0, Math.PI * 2); c.fill();
+        if (r > 0.6) { c.fillStyle = '#FF5FA2'; c.beginPath(); c.arc(x - 8, GROUND - 70, 4, 0, Math.PI * 2); c.arc(x + 10, GROUND - 58, 4, 0, Math.PI * 2); c.fill(); }
+      } else if (th === 'forest') {
+        c.fillStyle = '#7A5236'; c.fillRect(x - 5, GROUND - 40, 10, 30);
+        c.fillStyle = shade('#3BAF7A', 0.8 + r * 0.25);
+        for (let j = 0; j < 3; j++) { c.beginPath(); c.moveTo(x - 32 + j * 6, GROUND - 30 - j * 30); c.lineTo(x, GROUND - 80 - j * 30); c.lineTo(x + 32 - j * 6, GROUND - 30 - j * 30); c.closePath(); c.fill(); }
+        if (r > 0.55) { c.fillStyle = '#FF6B6B'; c.beginPath(); c.arc(x + 30, GROUND - 14, 9, Math.PI, 0); c.fill(); c.fillStyle = '#FFFFFF'; c.fillRect(x + 27, GROUND - 14, 6, 8); }
+        c.fillStyle = `rgba(255,240,150,${0.5 + Math.sin(t * 3 + i) * 0.4})`; c.beginPath(); c.arc(x + 20, GROUND - 100 - r * 60, 2.5, 0, Math.PI * 2); c.fill();
+      } else if (th === 'mountain') {
+        c.fillStyle = '#6E8FBF'; c.beginPath(); c.moveTo(x - 22, GROUND - 10); c.lineTo(x, GROUND - 80); c.lineTo(x + 22, GROUND - 10); c.closePath(); c.fill();
+        c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(x - 10, GROUND - 45); c.lineTo(x, GROUND - 80); c.lineTo(x + 10, GROUND - 45); c.closePath(); c.fill();
+        if (r > 0.6) { c.fillStyle = '#B7A2FF'; c.beginPath(); c.moveTo(x + 30, GROUND - 10); c.lineTo(x + 38, GROUND - 40); c.lineTo(x + 46, GROUND - 10); c.closePath(); c.fill(); }
+      } else if (th === 'volcano') {
+        c.fillStyle = '#8C5E52'; c.beginPath(); c.ellipse(x, GROUND - 12, 26 + r * 12, 18, 0, Math.PI, 0); c.fill();
+        if (r > 0.5) { c.fillStyle = '#FF7A3D'; c.beginPath(); c.ellipse(x + 40, GROUND - 4, 16, 4, 0, 0, Math.PI * 2); c.fill(); }
+      } else {
+        c.strokeStyle = '#5B4A86'; c.lineWidth = 6; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(x, GROUND - 10); c.lineTo(x, GROUND - 70); c.moveTo(x, GROUND - 50); c.lineTo(x - 18, GROUND - 74); c.moveTo(x, GROUND - 40); c.lineTo(x + 16, GROUND - 60); c.stroke();
+        c.fillStyle = `rgba(255,95,162,${0.4 + Math.sin(t * 2 + i) * 0.3})`; c.beginPath(); c.arc(x + 16, GROUND - 62, 4, 0, Math.PI * 2); c.fill();
+      }
+    }
+    c.fillStyle = k.grass; c.fillRect(0, GROUND - 6, 800, 120);
+    c.fillStyle = th === 'mountain' ? '#C9D9EE' : th === 'volcano' ? '#9C7462' : th === 'shadow' ? '#B4AACB' : '#E6C99A';
+    rr(c, -20, GROUND + 12, 840, 30, 15); c.fill();
+    for (let i = Math.floor(sx / 60) - 1; i < Math.floor(sx / 60) + 16; i++) {
+      const x = i * 60 - sx; c.fillStyle = 'rgba(0,0,0,0.06)'; c.beginPath(); c.ellipse(x, GROUND + 27, 6, 2.5, 0, 0, Math.PI * 2); c.fill();
+    }
+    c.fillStyle = shade(k.grass, 0.85); c.fillRect(0, GROUND + 50, 800, 80);
+  }
+  function drawTroll(c, x, y, t, scared) {
+    c.save(); c.translate(x, y + (scared ? 0 : Math.sin(t * 3) * 2));
+    c.fillStyle = '#7FB86A'; c.beginPath(); c.ellipse(0, -24, 22, 26, 0, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(0, -56, 16, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#6AA357'; c.beginPath(); c.ellipse(-3, -50, 7, 6, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#2B2350'; c.beginPath(); c.arc(-7, -60, 2.5, 0, Math.PI * 2); c.arc(5, -60, 2.5, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#2B2350'; c.lineWidth = 2; c.beginPath();
+    if (scared) c.arc(-1, -42, 4, 0, Math.PI * 2); else c.arc(-1, -46, 6, 0.2, Math.PI - 0.2);
+    c.stroke();
+    c.fillStyle = '#A0784E'; c.beginPath(); c.moveTo(-12, -70); c.lineTo(-6, -82); c.lineTo(-2, -70); c.closePath(); c.fill();
+    c.restore();
+  }
+  function drawSprite(c, x, y, t, hp, max, flash) {
+    c.save(); c.translate(x, y + Math.sin(t * 3) * 6);
+    c.globalAlpha = flash > 0 ? 0.5 : 1;
+    c.fillStyle = '#5B4A86';
+    c.beginPath(); c.moveTo(-26, 0);
+    for (let i = 1; i <= 6; i++) c.quadraticCurveTo(-26 + i * 9 - 4, 9, -26 + i * 9, 0);
+    c.lineTo(28, 0); c.quadraticCurveTo(30, -50, 0, -56); c.quadraticCurveTo(-30, -50, -26, 0); c.fill();
+    c.fillStyle = '#FFFFFF'; c.beginPath(); c.ellipse(-9, -30, 6, 8, 0, 0, Math.PI * 2); c.ellipse(9, -30, 6, 8, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#FF5FA2'; c.beginPath(); c.arc(-8, -29, 3, 0, Math.PI * 2); c.arc(10, -29, 3, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#2B2350'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(-16, -42); c.lineTo(-4, -38); c.moveTo(16, -42); c.lineTo(4, -38); c.stroke();
+    c.globalAlpha = 1;
+    for (let i = 0; i < max; i++) { c.fillStyle = i < hp ? '#8E7BB8' : '#E4DAF7'; c.beginPath(); c.arc(-((max - 1) * 7) + i * 14, -72, 5, 0, Math.PI * 2); c.fill(); }
+    c.restore();
+  }
+  function drawChest(c, x, y, open, gold, locks) {
+    c.save(); c.translate(x, y);
+    c.fillStyle = gold ? '#F5B800' : '#B07A4A';
+    rr(c, -30, -34, 60, 34, 6); c.fill();
+    c.fillStyle = gold ? '#FFD24D' : '#8A5A33';
+    if (open) { c.save(); c.translate(-30, -34); c.rotate(-0.9); rr(c, 0, -20, 60, 20, 8); c.fill(); c.restore(); c.fillStyle = '#FFE066'; c.beginPath(); c.arc(0, -36, 16, Math.PI, 0); c.fill(); }
+    else { rr(c, -32, -52, 64, 22, 9); c.fill(); }
+    c.fillStyle = '#5E3B1F'; c.fillRect(-30, -24, 60, 4);
+    if (!open && locks) for (let i = 0; i < locks.total; i++) {
+      const lx = -16 + i * 16, done = i < locks.done;
+      c.fillStyle = done ? '#BFE3C9' : '#FFC93C'; rr(c, lx - 5, -20, 10, 10, 2); c.fill();
+      c.strokeStyle = done ? '#BFE3C9' : '#C78F00'; c.lineWidth = 2; c.beginPath(); c.arc(lx, -21, 4, Math.PI, done ? Math.PI * 1.6 : 0); c.stroke();
+    }
+    c.restore();
+  }
+  function drawMerchant(c, x, y, t) {
+    c.save(); c.translate(x, y);
+    c.fillStyle = '#B07A4A'; rr(c, -50, -40, 100, 34, 6); c.fill();
+    c.fillStyle = '#7A4E2A'; c.beginPath(); c.arc(-30, -4, 10, 0, Math.PI * 2); c.arc(30, -4, 10, 0, Math.PI * 2); c.fill();
+    for (let i = 0; i < 6; i++) { c.fillStyle = i % 2 ? '#FFFFFF' : '#FF5FA2'; c.beginPath(); c.moveTo(-56 + i * 19, -78); c.lineTo(-37 + i * 19, -78); c.lineTo(-37 + i * 19, -66); c.quadraticCurveTo(-46 + i * 19, -60, -56 + i * 19, -66); c.closePath(); c.fill(); }
+    c.fillStyle = '#8A5A33'; c.fillRect(-48, -78, 4, 40); c.fillRect(44, -78, 4, 40);
+    c.fillStyle = '#F0566B'; c.beginPath(); c.arc(-24, -46, 7, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#3CC9A0'; c.beginPath(); c.arc(-8, -46, 7, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#FFC93C'; c.beginPath(); c.arc(8, -46, 7, 0, Math.PI * 2); c.fill();
+    c.restore();
+    drawQueen(c, x + 70, y, t, false, { dress: '#3CC9A0', hair: '#E8B04A', crown: 'flowers', cape: false, wand: false }, 1);
+  }
+  function drawFloatTexts(c, list) {
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = '900 28px ui-rounded, system-ui, sans-serif';
+    for (const tx of list) {
+      c.globalAlpha = clamp(tx.life * 1.5, 0, 1);
+      c.lineWidth = 6; c.strokeStyle = '#FFFFFF'; c.strokeText(tx.txt, tx.x, tx.y);
+      c.fillStyle = tx.color; c.fillText(tx.txt, tx.x, tx.y);
+    }
+    c.globalAlpha = 1;
+  }
 
   // ================= screens =================
-  const SCREENS = ['vMap', 'vBattle', 'vShop', 'vForge', 'vStars'];
+  const SCREENS = ['vMap', 'vJourney', 'vBattle', 'vShop', 'vForge', 'vStars'];
   function show(id) {
     SCREENS.forEach(s => { $(s).hidden = s !== id; });
     window.scrollTo({ top: 0 });
     if (id === 'vMap') renderMap();
   }
+  const visible = id => !$(id).hidden;
   document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => show('vMap')));
   let toastT = 0;
   function toast(t) { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2300); }
   function modal(html) { $('modalCard').innerHTML = html; $('modal').hidden = false; }
   function closeModal() { $('modal').hidden = true; }
 
-  // ================= map screen =================
-  const dragonCv = $('dragonCv'), dcx = dragonCv.getContext('2d');
+  // ================= map =================
+  const heroCv = $('heroCv'), hcx = heroCv.getContext('2d');
+  function drawHero() {
+    const t = performance.now() / 1000;
+    hcx.clearRect(0, 0, 192, 192);
+    const g = hcx.createRadialGradient(96, 100, 10, 96, 100, 96); g.addColorStop(0, '#FFF4FB'); g.addColorStop(1, '#E9E2FF');
+    hcx.fillStyle = g; hcx.beginPath(); hcx.arc(96, 96, 94, 0, Math.PI * 2); hcx.fill();
+    drawQueen(hcx, 78, 168, t, false, null, 1.75);
+    drawDragon(hcx, 148, 70 + Math.sin(t * 2) * 4, stageOf(save.xp), t, 1);
+    drawPet(hcx, save.wear.pet, 140, 170, t, 1.3);
+  }
   function renderMap() {
     touchDay();
     $('goldTxt').textContent = save.gold;
+    $('gemTxt').textContent = save.gems;
     $('starTxt').textContent = totalStars();
     $('queenTxt').textContent = save.name ? 'Dronning ' + save.name : 'Dronningen';
     const st = stageOf(save.xp), next = STAGES[st + 1];
     $('dragonTxt').textContent = (st === 0 ? '' : 'Glimt · ' + STAGES[st][1] + '. ') + STAGES[st][2];
     $('xpFill').style.width = next ? ((save.xp - STAGES[st][0]) / (next[0] - STAGES[st][0]) * 100) + '%' : '100%';
     const w = save.daily.wins;
-    $('questTxt').textContent = save.daily.claimed ? 'Fullført! Kom tilbake i morgen for et nytt oppdrag.' : 'Vinn 3 kamper i dag. Du har vunnet ' + Math.min(w, 3) + ' av 3.';
+    $('questTxt').textContent = save.daily.claimed ? 'Fullført! Kom tilbake i morgen for et nytt oppdrag.' : 'Fullfør 3 reiser eller kamper i dag. ' + Math.min(w, 3) + ' av 3.';
     const cb = $('claimBtn');
     cb.disabled = save.daily.claimed || w < 3;
     cb.textContent = save.daily.claimed ? 'Hentet' : '+30 gull';
@@ -636,8 +974,7 @@
     const now = new Date(), dow = (now.getDay() + 6) % 7;
     for (let i = 0; i < 7; i++) {
       const d = new Date(now); d.setDate(now.getDate() - dow + i);
-      const el = document.createElement('i');
-      el.textContent = names[i];
+      const el = document.createElement('i'); el.textContent = names[i];
       if (save.days.includes(dateKey(d))) el.className = 'on';
       wk.appendChild(el);
     }
@@ -645,20 +982,15 @@
     let nextFound = false;
     KINGDOMS.forEach((k, ki) => {
       const box = document.createElement('div'); box.className = 'kingdom';
-      const freed = save.freed.includes(k.id);
-      const open = !!k.list && kingdomOpen(ki);
+      const freed = save.freed.includes(k.id), open = kingdomOpen(ki);
       const bn = document.createElement('div');
       bn.className = 'kbanner' + (freed ? '' : ' grey');
       bn.innerHTML = `<div class="art" style="background:radial-gradient(circle at 20% 120%, ${k.colors[0]} 0 35%, transparent 36%), radial-gradient(circle at 75% 130%, ${k.colors[1]} 0 40%, transparent 41%), linear-gradient(135deg, ${k.colors[2]}, ${k.colors[0]})"></div><span class="tag"></span><h2></h2><p></p>`;
       bn.querySelector('h2').textContent = k.name;
-      bn.querySelector('p').textContent = k.sub + (k.tables.length ? ' · Tabeller: ' + k.tables.join(', ') : '');
+      bn.querySelector('p').textContent = k.sub + ' · Tabeller: ' + k.tables.join(', ');
       bn.querySelector('.tag').textContent = freed ? 'Fargene er tilbake!' : open ? kingdomStars(k) + ' / 21 stjerner' : 'Grått og stjålet';
       box.appendChild(bn);
-      if (!k.list) {
-        const s = document.createElement('p'); s.className = 'soon';
-        s.textContent = 'Kommer snart: ' + k.soon + '.';
-        box.appendChild(s);
-      } else if (!open) {
+      if (!open) {
         const s = document.createElement('p'); s.className = 'soon';
         s.textContent = 'Slå ' + KINGDOMS[ki - 1].boss + ' i ' + KINGDOMS[ki - 1].name + ' for å komme hit.';
         box.appendChild(s);
@@ -673,52 +1005,44 @@
           b.disabled = !lo;
           const st3 = [1, 2, 3].map(i => starSvg(i <= stars)).join('');
           if (l.boss) {
-            const sub = lo ? 'Sjefskamp' : 'Sjefskamp · krever alle nivåer og ' + k.gate + ' stjerner';
+            const sub = lo ? 'Sjefsreise' : 'Sjefsreise · krever alle etapper og ' + k.gate + ' stjerner';
             b.innerHTML = `<span style="text-align:left"><span style="display:block;font-size:13px;color:var(--muted)">${sub}</span>${l.enemy}</span><span class="st">${st3}</span>`;
           } else b.innerHTML = `${l.n}<span class="st">${st3}</span>`;
           b.setAttribute('aria-label', l.name + (stars ? ', ' + stars + ' stjerner' : ''));
-          b.addEventListener('click', () => openLevel(l));
+          b.addEventListener('click', () => openStage(l));
           path.appendChild(b);
         });
         box.appendChild(path);
       }
       host.appendChild(box);
     });
-    drawMapDragon();
-  }
-  let mapAnim = 0;
-  function drawMapDragon() {
-    cancelAnimationFrame(mapAnim);
-    const loop = () => {
-      dcx.clearRect(0, 0, 168, 168);
-      const g = dcx.createRadialGradient(84, 90, 10, 84, 90, 84); g.addColorStop(0, '#FFF4FB'); g.addColorStop(1, '#E9E2FF');
-      dcx.fillStyle = g; dcx.beginPath(); dcx.arc(84, 84, 82, 0, Math.PI * 2); dcx.fill();
-      const t = performance.now() / 1000;
-      drawDragon(dcx, 80, 92 + Math.sin(t * 2) * 4, stageOf(save.xp), t, 1.7);
-      if (!$('vMap').hidden) mapAnim = requestAnimationFrame(loop);
-    };
-    loop();
   }
   $('claimBtn').addEventListener('click', () => {
     if (save.daily.claimed || save.daily.wins < 3) return;
     save.daily.claimed = true; save.gold += 30; persist(); sfx.coin(); toast('+30 gull for dagens oppdrag!'); renderMap();
   });
-
-  function openLevel(l) {
+  function openStage(l) {
     const k = l.kingdom, stars = starsOf(l.id);
-    const fireLocked = l.ki === 0 && l.n < 3;
+    const enc = l.steps.filter(s => s !== 'walk').map(s => `<span>${s === 'castle' && l.boss ? 'Sjefskamp' : ENC_NAMES[s]}</span>`).join('');
     modal(`
-      <span class="small muted">${k.name} · ${l.boss ? 'Sjefskamp' : 'Nivå ' + l.n}</span>
+      <span class="small muted">${k.name} · ${l.boss ? 'Sjefsreise' : 'Etappe ' + l.n}</span>
       <h2>${l.name}</h2>
       <div class="bigstars">${[1, 2, 3].map(i => starSvg(i <= stars)).join('')}</div>
-      <p>Motstander: <b>${l.enemy}</b>${l.boss ? '. Han tåler mye, så bruk ildkuler!' : ''}</p>
-      <p class="small muted">Gangestykker fra ${k.tables.join(', ')}-gangen, og litt repetisjon.${fireLocked ? ' Ildkuler låses opp på nivå 3.' : ''}${l.ki >= 1 ? ' Regnbuepilen er åpen!' : ''}</p>
-      <p class="small muted">3 stjerner: vinn med mye av slottet igjen og nesten alle svar riktige.</p>
-      <button class="btn pink big" id="mGo">Til kamp!</button>
+      <p class="small muted">På veien møter du:</p>
+      <div class="steps">${enc}</div>
+      <p class="small muted">Du har ${3 + (save.wear.pet === 'bunny' ? 1 : 0)} hjerter. Kom fram med alle hjertene for 3 stjerner. Gangestykker fra ${k.tables.join(', ')}-gangen.</p>
+      ${save.bag.clover ? '<p class="small"><b>Firkløveren</b> gir dobbelt gull på denne reisen.</p>' : ''}
+      <button class="btn pink big" id="mGo">Start reisen</button>
       <button class="link" id="mClose">Tilbake til kartet</button>`);
-    $('mGo').onclick = () => { closeModal(); startBattle(l); };
+    $('mGo').onclick = () => { closeModal(); startJourney(l); };
     $('mClose').onclick = closeModal;
   }
+  $('quickBtn').addEventListener('click', () => {
+    let ki = 0;
+    KINGDOMS.forEach((k, i) => { if (kingdomOpen(i)) ki = i; });
+    const k = KINGDOMS[ki];
+    startBattle({ id: 'quick', name: 'Rask kamp i ' + k.name, kingdom: k, ki, n: 5, boss: false, quick: true, enemy: pick(COMMANDERS), hp: 85 + ki * 25, rate: 2.5 - ki * 0.12, dmg: 14 + ki * 3 }, null);
+  });
 
   // ================= questions =================
   function factPool(k) {
@@ -734,17 +1058,25 @@
     for (let i = 0; i < list.length; i++) { r -= ws[i]; if (r <= 0) return list[i]; }
     return list[list.length - 1];
   }
-  function makeQuestion(kind, k, avoid) {
+  function pickFact(k, hard, avoid) {
     const pool = factPool(k);
-    const f = kind === 'stone'
-      ? weighted(pool, p => p.w * (mastered(p.t, p.n) ? 3 : 1.4) * (p.n <= 6 ? 1.5 : 1))
-      : weighted(pool, p => p.w * (mastered(p.t, p.n) ? 0.7 : 4) * (p.n >= 6 ? 1.6 : 1));
+    const f = hard
+      ? weighted(pool, p => p.w * (mastered(p.t, p.n) ? 0.7 : 4) * (p.n >= 6 ? 1.6 : 1) * (p.n === 1 ? 0.3 : 1))
+      : weighted(pool, p => p.w * (mastered(p.t, p.n) ? 3 : 1.4) * (p.n <= 6 ? 1.5 : 1));
     let [a, b] = Math.random() < 0.5 ? [f.t, f.n] : [f.n, f.t];
     if (avoid === a + 'x' + b) [a, b] = [b, a];
+    return [a, b];
+  }
+  function makeQuestion(kind, k, avoid) {
+    const [a, b] = pickFact(k, kind !== 'stone', avoid);
     if (kind === 'rainbow') {
       const c = Math.floor(rnd(2, 10));
       const minus = a * b > c + 2 && Math.random() < 0.4;
       return { a, b, text: `${a} × ${b} ${minus ? '−' : '+'} ${c} =`, ans: minus ? a * b - c : a * b + c, fact: false, key: a + 'x' + b };
+    }
+    if (kind === 'missing') {
+      const left = Math.random() < 0.5;
+      return { a, b, text: left ? `${a} × ? = ${a * b}` : `? × ${b} = ${a * b}`, ans: left ? b : a, fact: true, key: a + 'x' + b, missing: true };
     }
     return { a, b, text: `${a} × ${b} =`, ans: a * b, fact: true, key: a + 'x' + b };
   }
@@ -755,29 +1087,426 @@
     return s[Math.floor(s.length / 2)];
   };
 
+  // ================= journey =================
+  const jcv = $('jCv'), jcx = jcv.getContext('2d');
+  const WALK_LEN = 540, QX = 200;
+  let J = null;
+  const WALK_LINES = ['Glimt nynner en sang.', 'En sommerfugl følger etter deg.', 'Du hører noe rasle i buskene.', 'Vinden kjennes frisk og god.', 'Glimt flyr en ekstra runde.', 'Der framme skjer det noe.', 'Du plukker opp blanke mynter.'];
+  function startJourney(l) {
+    const hearts = 3 + (save.wear.pet === 'bunny' ? 1 : 0);
+    const clover = save.bag.clover > 0;
+    if (clover) save.bag.clover--;
+    J = { l, k: l.kingdom, steps: l.steps, i: -1, hearts, max: hearts, gold: 0, gems: 0, clover, x: 0, tx: 0, objX: 0, mode: 'walk', enc: null, t: 0,
+      coins: [], texts: [], parts: [], hurt: 0, qx: QX, qtx: QX, misses: [], right: 0, wrong: 0, paused: false };
+    persist();
+    show('vJourney');
+    renderHearts(); renderJStats();
+    nextStep();
+  }
+  function renderHearts() {
+    if (!J) return;
+    $('jHearts').innerHTML = Array.from({ length: J.max }, (_, i) => icon('i-heart', 'heart' + (i < J.hearts ? '' : ' off'))).join('');
+    $('potionBtn').hidden = !(save.bag.potion > 0 && J.hearts < J.max && J.mode !== 'done' && J.hearts > 0);
+    $('potionBtn').textContent = 'Hjertedrikk (' + save.bag.potion + ')';
+  }
+  function renderJStats() { $('jGold').textContent = save.gold; $('jGems').textContent = save.gems; }
+  $('potionBtn').addEventListener('click', () => {
+    if (!J || save.bag.potion <= 0 || J.hearts >= J.max || J.hearts <= 0) return;
+    save.bag.potion--; J.hearts++; persist(); sfx.shield(); jText(J.qx, 220, '+1 hjerte', '#F0566B'); renderHearts();
+  });
+  function earnGold(n, x, y) {
+    const v = J.clover ? n * 2 : n;
+    save.gold += v; J.gold += v; renderJStats();
+    if (x != null) jText(x, y, '+' + v, '#D18A00');
+  }
+  function earnGems(n, x, y) { save.gems += n; J.gems += n; renderJStats(); if (x != null) jText(x, y, '+' + n + ' diamant' + (n > 1 ? 'er' : ''), '#1F7DC2'); sfx.gem(); }
+  function jText(x, y, txt, color) { J.texts.push({ x, y, txt, color, life: 1.2 }); }
+  function petBonus() { if (save.wear.pet === 'cat') earnGold(2, QX - 30, 250); }
+  function setPanel({ title, text, prog, keypad, choices, market, button, timer }) {
+    $('encTitle').textContent = title || '';
+    $('encText').textContent = text || '';
+    $('encProg').innerHTML = prog || '';
+    $('jqbox').hidden = !(keypad || choices);
+    $('jpad').hidden = !keypad;
+    $('choices').hidden = !choices;
+    $('market').hidden = !market;
+    $('encTimer').hidden = !timer;
+    $('encBtn').hidden = !button;
+    if (button) $('encBtn').textContent = button;
+    $('jmsg').textContent = '';
+    renderHearts();
+  }
+  const progDots = (n, done) => Array.from({ length: n }, (_, i) => `<i class="${i < done ? 'on' : ''}"></i>`).join('');
+
+  function nextStep() {
+    if (!J) return;
+    J.i++;
+    if (J.i >= J.steps.length) { finishJourney(true); return; }
+    const type = J.steps[J.i];
+    if (type === 'walk') {
+      J.mode = 'walk'; J.enc = null;
+      J.tx = J.x + WALK_LEN;
+      J.objX = J.tx + 420;
+      for (let i = 0; i < 4; i++) J.coins.push({ wx: J.x + 330 + i * 70 + rnd(-10, 10), y: GROUND - 10 - (i % 2) * 22, got: false });
+      setPanel({ title: 'På vei', text: pick(WALK_LINES) });
+      return;
+    }
+    J.mode = 'enc';
+    startEncounter(type);
+  }
+  function startEncounter(type) {
+    const k = J.k, med = medianTime();
+    const E = J.enc = { type, input: '', locked: false, q: null, flash: 0 };
+    if (type === 'stones') {
+      E.total = 5; E.idx = 0;
+      setPanel({ title: 'Steinsprang over elva', text: 'Velg steinen med riktig svar. Feil stein gir et plask!', prog: progDots(5, 0), choices: true });
+      newStoneQ();
+    } else if (type === 'chest') {
+      E.total = 3; E.done = 0;
+      setPanel({ title: 'Skattkiste med tre låser', text: 'Finn tallet som mangler for å åpne hver lås.', prog: progDots(3, 0), keypad: true });
+      newKeypadQ('missing');
+    } else if (type === 'bridge') {
+      E.need = 6; E.have = 0; E.time = clamp(med * 6 * 1.8 + 8, 24, 70); E.left = E.time;
+      setPanel({ title: 'Trollbrua', text: 'Trollet har tatt plankene! Legg 6 planker før tiden går ut.', prog: progDots(6, 0), keypad: true, timer: true });
+      newKeypadQ('stone');
+    } else if (type === 'sprite') {
+      E.max = 4 + (k.ki >= 2 ? 1 : 0); E.hp = E.max; E.qtime = clamp(med * 2.3, 6, 15); E.left = E.qtime;
+      setPanel({ title: 'En skyggevette!', text: 'Svar før tiden går ut for å jage den bort.', keypad: true, timer: true });
+      newKeypadQ('fire');
+    } else if (type === 'merchant') {
+      setPanel({ title: 'Den vandrende handelskvinnen', text: '«Velkommen, dronning! Trenger du noe til reisen?»', market: true, button: 'Gå videre' });
+      renderMarket();
+    } else if (type === 'treasure') {
+      setPanel({ title: 'En gyllen skatt!', text: 'Du har funnet en skattkiste ved veien.', button: 'Åpne kisten' });
+      E.opened = false;
+    } else if (type === 'castle') {
+      const l = J.l;
+      setPanel({ title: l.boss ? l.enemy + ' venter!' : 'Et fiendeslott!', text: l.boss ? 'Dette er sjefskampen. Slå ' + l.enemy + ' for å få fargene tilbake.' : l.enemy + ' sperrer veien med slottet sitt.', button: 'Til kamp!' });
+    }
+  }
+  function newKeypadQ(kind) {
+    const E = J.enc;
+    E.q = makeQuestion(kind, J.k, E.q && E.q.key);
+    E.input = ''; E.locked = false; E.qStart = performance.now();
+    if (E.type === 'sprite') E.left = E.qtime;
+    $('jqtext').textContent = E.q.text;
+    $('jqbox').classList.remove('ok', 'no');
+    if (E.type === 'chest' && save.wear.pet === 'owl') {
+      const a = E.q.text.startsWith('?') ? E.q.b : E.q.a;
+      const steps = []; for (let i = 1; i <= 4; i++) steps.push(a * i);
+      $('jmsg').textContent = 'Uglen hvisker: tell med ' + a + ': ' + steps.join(', ') + ' …';
+    } else $('jmsg').textContent = '';
+    renderJAns();
+  }
+  const E_input = () => (J && J.enc && J.enc.input) || '';
+  function renderJAns() { const el = $('jqans'); el.textContent = E_input() || '?'; el.classList.toggle('empty', !E_input()); }
+  function newStoneQ() {
+    const E = J.enc;
+    E.q = makeQuestion('stone', J.k, E.q && E.q.key);
+    E.locked = false;
+    const ans = E.q.ans, opts = new Set([ans]);
+    const cands = [ans + E.q.a, ans - E.q.a, ans + E.q.b, ans - E.q.b, ans + 1, ans - 1, ans + 10, ans - 10, (E.q.a + 1) * E.q.b, E.q.a * (E.q.b + 1)].filter(v => v > 0 && v !== ans);
+    while (opts.size < 3 && cands.length) opts.add(cands.splice(Math.floor(Math.random() * cands.length), 1)[0]);
+    while (opts.size < 3) opts.add(ans + opts.size * 3);
+    const arr = [...opts].sort(() => Math.random() - 0.5);
+    const owlOff = save.wear.pet === 'owl' ? arr.find(v => v !== ans) : null;
+    $('jqtext').textContent = E.q.text; $('jqans').textContent = '?'; $('jqans').classList.add('empty');
+    $('jqbox').classList.remove('ok', 'no');
+    $('choices').innerHTML = arr.map(v => `<button data-v="${v}" ${v === owlOff ? 'disabled aria-label="Uglen sier nei"' : ''}>${v}</button>`).join('');
+  }
+  $('choices').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled || !J || !J.enc || J.enc.locked) return;
+    answerJ(+b.dataset.v);
+  });
+  function jpress(k) {
+    if (!J || !J.enc || J.enc.locked || $('jpad').hidden) return;
+    const E = J.enc;
+    if (k === 'del') E.input = E.input.slice(0, -1);
+    else if (k === 'ok') { if (E.input) answerJ(+E.input); return; }
+    else if (E.input.length < 3) E.input = (E.input === '0' ? '' : E.input) + k;
+    renderJAns();
+  }
+  $('jpad').addEventListener('click', e => { const b = e.target.closest('button'); if (b) jpress(b.dataset.k); });
+
+  function answerJ(v) {
+    const E = J.enc, q = E.q, ok = v === q.ans;
+    E.locked = true;
+    if (q.fact) recordFact(q.a, q.b, ok);
+    if (ok && q.fact && !q.missing && E.qStart) { const secs = (performance.now() - E.qStart) / 1000; save.times.push(Math.min(secs, 20)); save.times = save.times.slice(-30); }
+    $('jqans').textContent = ok ? v : q.ans; $('jqans').classList.remove('empty');
+    $('jqbox').classList.toggle('ok', ok); $('jqbox').classList.toggle('no', !ok);
+    if (ok) { J.right++; save.xp += 2; sfx.ok(); }
+    else { J.wrong++; J.misses.push(q.missing ? q.a + ' × ' + q.b + ' = ' + q.a * q.b : q.text.replace(' =', '') + ' = ' + q.ans); }
+    persist();
+    const T = E.type;
+    if (T === 'stones') {
+      if (ok) {
+        E.idx++; sfx.hop(); $('encProg').innerHTML = progDots(5, E.idx);
+        $('jmsg').textContent = pick(['Hopp!', 'Riktig stein!', 'Tørre føtter!']);
+        if (E.idx >= E.total) setTimeout(() => encDone(6), 650); else setTimeout(() => { if (J && J.enc === E) newStoneQ(); }, 650);
+      } else {
+        sfx.splash(); burstAt(J.qx + 10, GROUND, ['#7CC8FF', '#FFFFFF', '#BFE3FF'], 16);
+        loseHeart('Plask! ' + q.text.replace(' =', '') + ' = ' + q.ans);
+        setTimeout(() => { if (J && J.enc === E && J.hearts > 0) newStoneQ(); }, 1500);
+      }
+    } else if (T === 'chest') {
+      if (ok) {
+        E.done++; $('encProg').innerHTML = progDots(3, E.done); $('jmsg').textContent = 'Klikk! En lås er åpen.';
+        if (E.done >= E.total) setTimeout(() => { if (Math.random() < 0.35) earnGems(1, J.objX - J.x, 180); encDone(10); }, 700);
+        else setTimeout(() => { if (J && J.enc === E) newKeypadQ('missing'); }, 700);
+      } else {
+        loseHeart('Låsen holdt. Tallet var ' + q.ans + ', for ' + q.a + ' × ' + q.b + ' = ' + q.a * q.b + '.');
+        setTimeout(() => { if (J && J.enc === E && J.hearts > 0) newKeypadQ('missing'); }, 2200);
+      }
+    } else if (T === 'bridge') {
+      if (ok) {
+        E.have++; $('encProg').innerHTML = progDots(6, E.have); $('jmsg').textContent = 'En planke til!'; thud(0.15);
+        if (E.have >= E.need) setTimeout(() => encDone(8), 600); else setTimeout(() => { if (J && J.enc === E) newKeypadQ('stone'); }, 350);
+      } else {
+        E.left = Math.max(1, E.left - 4); sfx.no();
+        $('jmsg').textContent = 'Trollet ler! Riktig svar var ' + q.ans + '. Du mistet 4 sekunder.';
+        setTimeout(() => { if (J && J.enc === E) newKeypadQ('stone'); }, 1300);
+      }
+    } else if (T === 'sprite') {
+      if (ok) {
+        E.hp--; E.flash = 0.4; sfx.hit(); burstAt(J.objX - J.x + 20, GROUND - 40, RAINBOW, 14);
+        $('jmsg').textContent = pick(['Pang!', 'Vetten krymper!', 'Treff!']);
+        if (E.hp <= 0) setTimeout(() => encDone(8), 600); else setTimeout(() => { if (J && J.enc === E) newKeypadQ('fire'); }, 450);
+      } else {
+        loseHeart('Vetten slo til! ' + q.text.replace(' =', '') + ' = ' + q.ans);
+        setTimeout(() => { if (J && J.enc === E && J.hearts > 0) newKeypadQ('fire'); }, 1600);
+      }
+    }
+  }
+  function loseHeart(msg) {
+    J.hearts--; J.hurt = 0.6; sfx.hurt();
+    jText(J.qx, 230, '−1', '#F0566B');
+    $('jmsg').textContent = msg;
+    renderHearts();
+    if (J.hearts <= 0) { const j = J; if (J.enc) J.enc.locked = true; setTimeout(() => { if (J === j) finishJourney(false); }, 1400); }
+  }
+  function burstAt(x, y, colors, n) { for (let i = 0; i < n; i++) J.parts.push({ x, y, vx: rnd(-140, 140), vy: rnd(-240, -60), life: rnd(0.5, 1), s: rnd(4, 8), c: pick(colors) }); }
+  function encDone(gold) {
+    if (!J || !J.enc) return;
+    const E = J.enc; E.finished = true;
+    earnGold(gold, J.objX - J.x, 230); sfx.coin(); petBonus();
+    $('jmsg').textContent = pick(['Bra jobba!', 'Utfordringen er klart!', 'Videre på eventyr!']);
+    $('jpad').hidden = true; $('choices').hidden = true; $('encTimer').hidden = true;
+    setTimeout(() => { if (J && J.enc === E) nextStep(); }, 900);
+  }
+  function renderMarket() {
+    const host = $('market'); host.innerHTML = '';
+    Object.entries(BAG).forEach(([id, it]) => {
+      const price = Math.round(it.price * 0.8);
+      const b = document.createElement('button'); b.className = 'btn';
+      b.innerHTML = `<b>${it.name}</b><span class="small muted">Har ${save.bag[id]}/${it.max}</span><span class="pill" style="font-size:13px"><svg class="coin"><use href="#i-coin"/></svg>${price}</span>`;
+      b.disabled = save.gold < price || save.bag[id] >= it.max;
+      b.onclick = () => { if (save.gold < price || save.bag[id] >= it.max) return; save.gold -= price; save.bag[id]++; persist(); sfx.coin(); renderJStats(); renderMarket(); renderHearts(); toast(it.name + ' kjøpt!'); };
+      host.appendChild(b);
+    });
+  }
+  $('encBtn').addEventListener('click', () => {
+    if (!J || !J.enc) return;
+    const E = J.enc;
+    if (E.type === 'merchant') { nextStep(); return; }
+    if (E.type === 'treasure') {
+      if (!E.opened) {
+        E.opened = true; sfx.win();
+        earnGold(15, J.objX - J.x, 200);
+        earnGems(J.l.n % 3 === 0 ? 2 : 1, J.objX - J.x, 160);
+        burstAt(J.objX - J.x, GROUND - 40, ['#FFD24D', '#FFF3B0', '#3FA9F5'], 24);
+        $('encText').textContent = 'Kisten var full av gull og diamanter!';
+        $('encBtn').textContent = 'Gå videre';
+      } else nextStep();
+      return;
+    }
+    if (E.type === 'castle') startBattle(J.l, { journey: true });
+  });
+  $('jQuit').addEventListener('click', () => {
+    if (!J) return;
+    J.paused = true;
+    modal(`<h2>Pause</h2><p>Reisen venter på deg. Gullet du har funnet, beholder du uansett.</p><button class="btn pink big" id="pRes">Fortsett reisen</button><button class="link" id="pQuit">Avslutt og gå til kartet</button>`);
+    $('pRes').onclick = () => { closeModal(); if (J) J.paused = false; };
+    $('pQuit').onclick = () => { closeModal(); J = null; show('vMap'); };
+  });
+  function journeyBattleResult(won, hpPct, stats) {
+    show('vJourney');
+    if (!J) return;
+    J.right += stats.right; J.wrong += stats.wrong; J.misses.push(...stats.misses);
+    if (!won) { finishJourney(false, 'Slottet ditt falt i kampen mot ' + J.l.enemy + '.'); return; }
+    const lost = hpPct < 0.25 ? 2 : hpPct < 0.5 ? 1 : 0;
+    if (lost) { J.hearts = Math.max(1, J.hearts - lost); jText(QX, 230, '−' + lost, '#F0566B'); }
+    setPanel({ title: 'Seier!', text: lost ? 'Du vant, men slottet tok skade, så du mistet ' + lost + ' hjerte' + (lost > 1 ? 'r' : '') + '.' : 'Du vant uten å miste hjerter!' });
+    earnGold(J.l.boss ? 30 : 12, J.objX - J.x, 200);
+    if (J.enc) J.enc.finished = true;
+    const j = J;
+    setTimeout(() => { if (J === j) nextStep(); }, 1300);
+  }
+  function finishJourney(ok, reason) {
+    const j = J; if (!j || j.mode === 'done') return;
+    j.mode = 'done';
+    const l = j.l;
+    let stars = 0, bonusGems = 0, freedNow = false;
+    if (ok) {
+      const frac = j.hearts / j.max;
+      stars = frac >= 1 ? 3 : frac >= 0.5 ? 2 : 1;
+      const prev = starsOf(l.id);
+      save.levels[l.id] = { stars: Math.max(prev, stars) };
+      earnGold(5 * stars);
+      if (stars === 3 && prev < 3) bonusGems += 1;
+      if (l.boss && !prev) bonusGems += 5;
+      if (bonusGems) { save.gems += bonusGems; j.gems += bonusGems; }
+      if (l.boss && !save.freed.includes(l.kingdom.id)) { save.freed.push(l.kingdom.id); freedNow = true; }
+      touchDay(); save.daily.wins++;
+      sfx.win();
+    } else sfx.lose();
+    persist();
+    renderHearts();
+    const uniq = [...new Set(j.misses)].slice(0, 12);
+    const nextL = ok ? nextStageAfter(l) : null;
+    const allDone = ok && l.boss && l.ki === KINGDOMS.length - 1;
+    modal(`
+      <span class="small muted">${l.kingdom.name} · ${l.name}</span>
+      <h2>${ok ? (allDone ? 'Du har vunnet!' : 'Reisen er fullført!') : 'Du må hvile'}</h2>
+      ${ok ? `<div class="bigstars">${[1, 2, 3].map(i => starSvg(i <= stars, i <= stars ? 'pop' : '')).join('')}</div>` : ''}
+      ${freedNow ? `<p><b>Fargene er tilbake i ${l.kingdom.name}!</b></p>` : ''}
+      ${allDone ? '<p>Skyggebaronen er beseiret, og alle fem rikene har fått fargene tilbake. Du er en ekte gangemester!</p>' : ''}
+      <p>${ok ? (stars === 3 ? 'Alle hjertene i behold!' : 'Du kom fram med ' + j.hearts + ' av ' + j.max + ' hjerter.') : (reason || 'Du mistet alle hjertene.') + ' Gullet du fant, får du beholde.'}</p>
+      <div class="reward"><span class="pill"><svg class="coin"><use href="#i-coin"/></svg>+${j.gold}</span>${j.gems ? `<span class="pill"><svg class="gemi"><use href="#i-gem"/></svg>+${j.gems}</span>` : ''}<span class="pill">${j.right} riktige</span></div>
+      ${uniq.length ? `<p class="small muted">Øv litt på disse:</p><div class="chips">${uniq.map(m => `<span>${m}</span>`).join('')}</div>` : ''}
+      ${nextL ? `<button class="btn pink big" id="rNext">Neste: ${nextL.name}</button>` : ''}
+      <button class="btn ${nextL ? '' : 'pink'} big" id="rAgain">${ok ? 'Reis etappen igjen' : 'Prøv igjen'}</button>
+      <button class="link" id="rMap">Til kartet</button>`);
+    $('rAgain').onclick = () => { closeModal(); startJourney(l); };
+    $('rMap').onclick = () => { closeModal(); J = null; show('vMap'); };
+    if (nextL) $('rNext').onclick = () => { closeModal(); openStage(nextL); };
+  }
+  function nextStageAfter(l) {
+    const list = l.kingdom.list, n = list[list.indexOf(l) + 1];
+    if (n && levelOpen(n)) return n;
+    const k2 = KINGDOMS[l.ki + 1];
+    if (l.boss && k2 && kingdomOpen(l.ki + 1)) return k2.list[0];
+    return null;
+  }
+  function journeyTick(dt) {
+    J.t += dt;
+    if (J.mode === 'walk') {
+      J.x = Math.min(J.tx, J.x + 230 * dt);
+      for (const cn of J.coins) if (!cn.got && cn.wx - J.x < QX + 6) { cn.got = true; earnGold(1, QX, cn.y - 20); sfx.coin(); }
+      if (J.x >= J.tx) { J.coins = J.coins.filter(c => !c.got); nextStep(); if (!J) return; }
+    }
+    const E = J.enc;
+    if (J.mode === 'enc' && E && !E.locked && !E.finished) {
+      if (E.type === 'bridge') {
+        E.left -= dt;
+        $('encTimerFill').style.width = clamp(E.left / E.time * 100, 0, 100) + '%';
+        if (E.left <= 0) {
+          E.locked = true;
+          E.have = Math.floor(E.have / 2); $('encProg').innerHTML = progDots(6, E.have);
+          loseHeart('Tiden gikk ut! Trollet tok halvparten av plankene.');
+          setTimeout(() => { if (J && J.enc === E && J.hearts > 0) { E.left = E.time; newKeypadQ('stone'); } }, 1500);
+        }
+      } else if (E.type === 'sprite') {
+        E.left -= dt;
+        $('encTimerFill').style.width = clamp(E.left / E.qtime * 100, 0, 100) + '%';
+        if (E.left <= 0) {
+          E.locked = true;
+          $('jqans').textContent = E.q.ans; $('jqans').classList.remove('empty'); $('jqbox').classList.add('no');
+          J.misses.push(E.q.text.replace(' =', '') + ' = ' + E.q.ans); recordFact(E.q.a, E.q.b, false);
+          loseHeart('For sent! Vetten slo til. Svaret var ' + E.q.ans + '.');
+          setTimeout(() => { if (J && J.enc === E && J.hearts > 0) newKeypadQ('fire'); }, 1600);
+        }
+      }
+    }
+    if (E && E.type === 'stones') {
+      const ox = J.objX - J.x;
+      J.qtx = E.idx === 0 ? QX : ox - 110 + (E.idx - 1) * 52 + (E.finished ? 60 : 0);
+    } else if (E && E.type === 'bridge' && E.finished) J.qtx = J.objX - J.x + 140;
+    else J.qtx = QX;
+    J.qx += (J.qtx - J.qx) * Math.min(1, dt * 6);
+    J.hurt = Math.max(0, J.hurt - dt);
+    if (E) E.flash = Math.max(0, (E.flash || 0) - dt);
+    for (const p of J.parts) { p.life -= dt; p.vy += 500 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
+    J.parts = J.parts.filter(p => p.life > 0);
+    for (const tx of J.texts) { tx.life -= dt; tx.y -= 40 * dt; }
+    J.texts = J.texts.filter(t => t.life > 0);
+  }
+  function journeyDraw() {
+    if (!J) return;
+    const c = jcx, t = J.t, k = J.k;
+    drawWorld(c, k, J.x, t);
+    const ox = J.objX - J.x;
+    const E = J.enc;
+    const nextType = J.mode === 'walk' ? J.steps[J.i + 1] : (E && E.type);
+    if (nextType === 'stones') {
+      c.fillStyle = '#7CC8FF'; c.fillRect(ox - 150, GROUND - 6, 330, 60);
+      c.fillStyle = 'rgba(255,255,255,0.6)';
+      for (let i = 0; i < 6; i++) c.fillRect(ox - 140 + ((i * 60 + t * 40) % 320), GROUND + 10 + (i % 3) * 12, 18, 3);
+      for (let i = 0; i < 5; i++) { c.fillStyle = '#A7A0B8'; c.beginPath(); c.ellipse(ox - 110 + i * 52, GROUND + 8, 20, 9, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = '#C9C3D9'; c.beginPath(); c.ellipse(ox - 113 + i * 52, GROUND + 5, 12, 4, 0, 0, Math.PI * 2); c.fill(); }
+    } else if (nextType === 'bridge') {
+      c.fillStyle = '#4B3F63'; c.fillRect(ox - 70, GROUND - 6, 160, 130);
+      c.fillStyle = '#2B2350'; c.fillRect(ox - 70, GROUND + 30, 160, 100);
+      const have = E && E.type === 'bridge' ? E.have : 0;
+      c.strokeStyle = '#8A5A33'; c.lineWidth = 3; c.beginPath(); c.moveTo(ox - 74, GROUND - 4); c.lineTo(ox + 94, GROUND - 4); c.stroke();
+      for (let i = 0; i < have; i++) { c.fillStyle = i % 2 ? '#C08A55' : '#B07A4A'; rr(c, ox - 68 + i * 26.5, GROUND - 6, 24, 14, 3); c.fill(); }
+      const done = E && E.type === 'bridge' && E.finished;
+      drawTroll(c, ox + (done ? 300 : 140), GROUND + 6, t, done);
+    } else if (nextType === 'chest') {
+      drawChest(c, ox, GROUND + 8, E && E.type === 'chest' && E.finished, false, { total: 3, done: E && E.type === 'chest' ? E.done : 0 });
+    } else if (nextType === 'treasure') {
+      c.fillStyle = `rgba(255,220,100,${0.25 + Math.sin(t * 3) * 0.12})`; c.beginPath(); c.arc(ox, GROUND - 20, 48, 0, Math.PI * 2); c.fill();
+      drawChest(c, ox, GROUND + 8, E && E.type === 'treasure' && E.opened, true, null);
+    } else if (nextType === 'sprite') {
+      if (!(E && E.type === 'sprite' && E.finished)) drawSprite(c, ox + 20, GROUND, t, E && E.type === 'sprite' ? E.hp : 4, E && E.type === 'sprite' ? E.max : 4, E ? E.flash : 0);
+    } else if (nextType === 'merchant') {
+      drawMerchant(c, ox, GROUND + 8, t);
+    } else if (nextType === 'castle') {
+      c.save(); c.translate(ox + 120, GROUND + 8); c.scale(0.75, 0.75);
+      drawCastle(c, 0, 0, J.l.boss ? { wall: '#7E7499', roof: '#2B2350', flag: '#FF5FA2' } : { wall: '#A69CBC', roof: '#4B3F63', flag: '#3B2F52' }, null, 'grumpy', -1, null);
+      c.restore();
+      if (J.l.boss) { c.fillStyle = 'rgba(75,63,99,0.6)'; c.beginPath(); c.arc(ox + 100, 70, 30, 0, Math.PI * 2); c.arc(ox + 140, 60, 36, 0, Math.PI * 2); c.arc(ox + 175, 74, 26, 0, Math.PI * 2); c.fill(); }
+    }
+    for (const cn of J.coins) if (!cn.got) {
+      const x = cn.wx - J.x; if (x < -20 || x > 820) continue;
+      const sq = Math.abs(Math.cos(t * 4 + cn.wx));
+      c.fillStyle = '#FFC93C'; c.beginPath(); c.ellipse(x, cn.y, 8 * sq + 1, 8, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#D18A00'; c.lineWidth = 1.5; c.stroke();
+    }
+    const walking = J.mode === 'walk' || Math.abs(J.qtx - J.qx) > 3;
+    drawPet(c, save.wear.pet, J.qx - 52, GROUND + 24, walking ? t : 0, 1.5);
+    if (J.hurt > 0 && Math.floor(J.hurt * 12) % 2 === 0) c.globalAlpha = 0.45;
+    drawQueen(c, J.qx, GROUND + 24 + (E && E.type === 'stones' && E.idx > 0 ? -12 : 0), t, walking, null, 1.6);
+    c.globalAlpha = 1;
+    drawDragon(c, J.qx - 70, GROUND - 150 + Math.sin(t * 2) * 8, stageOf(save.xp), t, 1.1);
+    for (const p of J.parts) { c.globalAlpha = clamp(p.life * 1.6, 0, 1); c.fillStyle = p.c; c.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); }
+    c.globalAlpha = 1;
+    drawFloatTexts(c, J.texts);
+  }
+
   // ================= battle =================
   const cv = $('sceneCv'), cx = cv.getContext('2d');
   const W = 800, H = 420, ISL_Y = 318, ME_X = 190, FOE_X = 610;
-  const AMMO = { stone: { dmg: 10, color: '#9A93AA', r: 9 }, fire: { dmg: 18, color: '#FF6B2C', r: 11 }, rainbow: { dmg: 30, color: '#FF5FA2', r: 8 } };
-  const RAINBOW = ['#FF5FA2', '#FFB627', '#3CC9A0', '#4DA3FF', '#7C5CFF'];
-  let B = null, raf = 0;
-
-  function startBattle(l) {
+  const AMMO = { stone: { dmg: 10, color: '#9A93AA' }, fire: { dmg: 18 }, rainbow: { dmg: 30 } };
+  let B = null;
+  function startBattle(l, ctx) {
     const maxHp = 100 + save.up.wall * 20;
     const med = medianTime();
+    const amulet = save.bag.amulet > 0;
+    if (amulet) save.bag.amulet--;
     B = {
-      level: l, k: l.kingdom, state: 'ready', t: 0,
-      me: { hp: maxHp, max: maxHp, broken: new Set(), order: shuffledOrder(), swing: 0, shield: false },
+      level: l, k: l.kingdom, ctx: ctx || {}, state: 'ready', t: 0,
+      me: { hp: maxHp, max: maxHp, broken: new Set(), order: shuffledOrder(), swing: 0, shield: amulet },
       foe: { hp: l.hp, max: l.hp, broken: new Set(), order: shuffledOrder(), swing: 0, charge: 0 },
       reload: clamp(med * l.rate, 4.5, 16), med,
       ammo: 'stone', q: null, input: '', qStart: 0, locked: true,
       shots: [], parts: [], texts: [], streak: 0, right: 0, wrong: 0, misses: [], retry: [], dragonCount: 0, last: '', shake: 0,
-      shieldNeed: 5 - save.up.shield, dragon: stageOf(save.xp)
+      shieldNeed: 5 - save.up.shield, dragon: stageOf(save.xp), fireworks: 0
     };
+    persist();
     $('myName').textContent = save.name ? save.name + 's slott' : 'Ditt slott';
     $('foeName').textContent = l.enemy;
-    $('readyTitle').textContent = (l.boss ? 'Sjefskamp: ' : '') + l.name;
-    $('readyText').textContent = l.enemy + ' angriper! Svar riktig, så skyter katapulten din. Velg ildkule eller regnbuepil for mer skade.';
+    $('readyTitle').textContent = (l.boss ? 'Sjefskamp: ' : '') + (l.quick ? 'Rask kamp' : l.name);
+    $('readyText').textContent = l.enemy + ' angriper! Svar riktig, så skyter katapulten din.' + (amulet ? ' Skjoldamuletten beskytter deg!' : '');
     $('goBtn').textContent = 'Start kampen';
     $('readyBanner').hidden = false;
     removeQuit();
@@ -792,14 +1521,6 @@
     $('foeCharge').style.width = '0';
     show('vBattle');
     updateHud();
-    cancelAnimationFrame(raf);
-    let last = performance.now();
-    const loop = now => {
-      const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (B) { tick(dt); drawScene(); }
-      if (!$('vBattle').hidden) raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
   }
   $('goBtn').addEventListener('click', () => {
     if (!B) return;
@@ -818,21 +1539,27 @@
     $('goBtn').textContent = 'Fortsett';
     $('readyBanner').hidden = false;
     if (!$('quitBattle')) {
-      const q = document.createElement('button'); q.id = 'quitBattle'; q.className = 'link'; q.textContent = 'Gi opp og gå til kartet';
-      q.onclick = () => { B = null; q.remove(); show('vMap'); };
+      const q = document.createElement('button'); q.id = 'quitBattle'; q.className = 'link'; q.textContent = 'Gi opp kampen';
+      q.onclick = () => {
+        const b = B; B = null; q.remove();
+        if (b && b.ctx.journey) journeyBattleResult(false, 0, { right: b.right, wrong: b.wrong, misses: b.misses });
+        else show('vMap');
+      };
       $('readyBanner').appendChild(q);
     }
   }
   $('pauseBtn').addEventListener('click', pauseBattle);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseBattle(); });
-
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) return;
+    pauseBattle();
+    if (J && visible('vJourney') && $('modal').hidden) $('jQuit').click();
+  });
   document.querySelectorAll('#ammo button').forEach(b => b.addEventListener('click', () => {
     if (!B || b.disabled) return;
     B.ammo = b.dataset.ammo;
     document.querySelectorAll('#ammo button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     if (B.state === 'fight' && !B.locked && !B.input) nextQuestion();
   }));
-
   function nextQuestion() {
     if (!B || B.state !== 'fight') return;
     let q;
@@ -863,7 +1590,7 @@
       if (q.fact) { save.times.push(Math.min(secs, 20)); save.times = save.times.slice(-30); }
       save.xp += 2;
       const fast = secs < Math.max(2.5, B.med * 0.7);
-      const dmg = Math.round(AMMO[B.ammo].dmg * (1 + 0.12 * save.up.cata) * (fast ? 1.25 : 1));
+      const dmg = Math.round(AMMO[B.ammo].dmg * (1 + 0.12 * save.up.cata) * (save.wear.pet === 'fox' ? 1.15 : 1) * (fast ? 1.25 : 1));
       fire('me', B.ammo, dmg);
       $('qbox').classList.add('ok');
       $('qmsg').textContent = fast ? 'Lynrask! Ekstra skade' : pick(['Treff!', 'Riktig!', 'Bra skutt!', 'Bom-bom!', 'Sånn ja!']);
@@ -888,7 +1615,6 @@
     persist();
   }
   $('pad').addEventListener('click', e => { const b = e.target.closest('button'); if (b) press(b.dataset.k); });
-
   function fire(who, kind, dmg) {
     const fromMe = who !== 'foe';
     let sx, sy;
@@ -902,8 +1628,7 @@
   function impact(s) {
     const target = s.fromMe ? B.foe : B.me;
     if (!s.fromMe && B.me.shield) {
-      B.me.shield = false;
-      sfx.shield();
+      B.me.shield = false; sfx.shield();
       burst(s.tx, s.ty, ['#BFE3FF', '#FFFFFF', '#E9E2FF'], 18);
       floatText(s.tx, s.ty - 20, 'Skjold!', '#4DA3FF');
       return;
@@ -921,9 +1646,7 @@
     if (B.foe.hp <= 0 && B.state === 'fight') endBattle(true);
     else if (B.me.hp <= 0 && B.state === 'fight') endBattle(false);
   }
-  function burst(x, y, colors, n) {
-    for (let i = 0; i < n; i++) B.parts.push({ x, y, vx: rnd(-160, 160), vy: rnd(-260, -40), life: rnd(0.6, 1.1), s: rnd(4, 9), c: pick(colors), rot: rnd(0, 6) });
-  }
+  function burst(x, y, colors, n) { for (let i = 0; i < n; i++) B.parts.push({ x, y, vx: rnd(-160, 160), vy: rnd(-260, -40), life: rnd(0.6, 1.1), s: rnd(4, 9), c: pick(colors), rot: rnd(0, 6) }); }
   function floatText(x, y, txt, color) { B.texts.push({ x, y, txt, color, life: 1 }); }
   function updateHud() {
     $('myHp').style.width = (B.me.hp / B.me.max * 100) + '%';
@@ -933,7 +1656,8 @@
     const t = Math.min(1, tt == null ? s.t : tt);
     return { x: s.sx + (s.tx - s.sx) * t, y: s.sy + (s.ty - s.sy) * t - s.h * 4 * t * (1 - t) };
   }
-  function tick(dt) {
+  function battleTick(dt) {
+    if (!B) return;
     B.t += dt;
     if (B.state === 'fight') {
       B.foe.charge += dt / B.reload;
@@ -941,6 +1665,7 @@
       $('foeCharge').style.width = (B.foe.charge * 100) + '%';
     }
     if (B.state === 'paused') return;
+    if (B.fireworks > 0) { B.fireworks -= dt; if (Math.random() < 0.15) burst(ME_X + rnd(-120, 120), rnd(60, 160), RAINBOW, 18); }
     B.me.swing = Math.max(0, B.me.swing - dt * 2.5);
     B.foe.swing = Math.max(0, B.foe.swing - dt * 2.5);
     B.shake = Math.max(0, B.shake - dt * 30);
@@ -950,7 +1675,7 @@
         const p = shotPos(s);
         B.parts.push({ x: p.x, y: p.y, vx: rnd(-20, 20), vy: rnd(-20, 20), life: 0.4, s: rnd(3, 6), c: s.kind === 'rainbow' ? pick(RAINBOW) : pick(['#FFB627', '#FF6B2C']), rot: 0 });
       }
-      if (s.t >= 1 && !s.done) { s.done = true; if (B.state === 'fight') impact(s); }
+      if (s.t >= 1 && !s.done) { s.done = true; if (B.state === 'fight') impact(s); if (!B) return; }
     }
     B.shots = B.shots.filter(s => !s.done);
     for (const p of B.parts) { p.life -= dt; p.vy += 520 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += dt * 6; }
@@ -958,7 +1683,8 @@
     for (const t of B.texts) { t.life -= dt * 0.8; t.y -= 40 * dt; }
     B.texts = B.texts.filter(t => t.life > 0);
   }
-  function drawScene() {
+  function battleDraw() {
+    if (!B) return;
     const c = cx, k = B.k, t = B.t;
     c.save();
     if (B.shake) c.translate(rnd(-B.shake, B.shake), rnd(-B.shake, B.shake));
@@ -966,8 +1692,9 @@
     const bobA = Math.sin(t * 1.2) * 3, bobB = Math.sin(t * 1.2 + 1.5) * 3;
     c.save(); c.translate(0, bobA);
     drawIsland(c, ME_X, ISL_Y, k.grass, k.rock, 1);
-    drawCastle(c, ME_X, ISL_Y - 9, { wall: save.wall, roof: save.roof, flag: save.flag }, B.me.broken, B.me.hp < B.me.max * 0.4 ? 'worried' : 'happy', 1);
+    drawCastle(c, ME_X, ISL_Y - 9, { wall: save.wall, roof: save.roof, flag: save.flag }, B.me.broken, B.me.hp < B.me.max * 0.4 ? 'worried' : 'happy', 1, save.deco);
     drawCatapult(c, ME_X + 105, ISL_Y - 2, 1, B.me.swing);
+    drawPet(c, save.wear.pet, ME_X + 62, ISL_Y - 9, t, 1);
     if (B.me.shield) {
       c.fillStyle = 'rgba(160,210,255,0.28)'; c.strokeStyle = 'rgba(120,180,255,0.8)'; c.lineWidth = 3;
       c.beginPath(); c.ellipse(ME_X, ISL_Y - 8, 118, 200 + Math.sin(t * 4) * 3, 0, Math.PI, 0); c.fill(); c.stroke();
@@ -975,7 +1702,7 @@
     c.restore();
     c.save(); c.translate(0, bobB);
     drawIsland(c, FOE_X, ISL_Y, shade(k.grass, 0.8), '#9C93AE', 2);
-    drawCastle(c, FOE_X, ISL_Y - 9, { wall: '#A69CBC', roof: '#4B3F63', flag: '#3B2F52' }, B.foe.broken, 'grumpy', -1);
+    drawCastle(c, FOE_X, ISL_Y - 9, B.level.boss ? { wall: '#7E7499', roof: '#2B2350', flag: '#FF5FA2' } : { wall: '#A69CBC', roof: '#4B3F63', flag: '#3B2F52' }, B.foe.broken, 'grumpy', -1, null);
     drawCatapult(c, FOE_X - 105, ISL_Y - 2, -1, B.foe.swing);
     const ch = B.foe.charge;
     c.fillStyle = `rgba(75,63,99,${0.25 + ch * 0.55})`;
@@ -1004,132 +1731,206 @@
       }
     }
     for (const p of B.parts) { c.save(); c.globalAlpha = clamp(p.life * 1.5, 0, 1); c.translate(p.x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.fillRect(-p.s / 2, -p.s / 2, p.s, p.s); c.restore(); }
-    c.textAlign = 'center'; c.textBaseline = 'middle';
-    c.font = '900 30px ui-rounded, system-ui, sans-serif';
-    for (const tx of B.texts) {
-      c.globalAlpha = clamp(tx.life * 1.5, 0, 1);
-      c.lineWidth = 6; c.strokeStyle = '#FFFFFF'; c.strokeText(tx.txt, tx.x, tx.y);
-      c.fillStyle = tx.color; c.fillText(tx.txt, tx.x, tx.y);
-    }
-    c.globalAlpha = 1;
+    drawFloatTexts(c, B.texts);
     c.restore();
   }
-
   function endBattle(won) {
     B.state = 'ending';
+    if (won && save.deco.fireworks) B.fireworks = 2.5;
     const l = B.level, b = B;
     setTimeout(() => {
       if (B !== b) return;
       B.state = 'end';
       const hpPct = b.me.hp / b.me.max, acc = b.right / Math.max(1, b.right + b.wrong);
-      let stars = 0, gold = 0, freedNow = false;
+      if (b.ctx.journey) {
+        if (won) sfx.win(); else sfx.lose();
+        persist();
+        B = null;
+        journeyBattleResult(won, hpPct, { right: b.right, wrong: b.wrong, misses: b.misses });
+        return;
+      }
+      let stars = 0, gold = 0;
       if (won) {
         stars = 1 + (hpPct >= 0.5 ? 1 : 0) + (hpPct >= 0.75 && acc >= 0.85 ? 1 : 0);
-        const prev = starsOf(l.id);
-        gold = 8 + stars * 6 + (l.boss && !prev ? 40 : 0);
-        save.levels[l.id] = { stars: Math.max(prev, stars) };
+        gold = 6 + stars * 4;
         save.gold += gold;
         touchDay(); save.daily.wins++;
-        if (l.boss && !save.freed.includes(l.kingdom.id)) { save.freed.push(l.kingdom.id); freedNow = true; }
         sfx.win();
       } else sfx.lose();
       persist();
       const uniq = [...new Set(b.misses)].slice(0, 12);
-      const nextL = won ? nextLevelAfter(l) : null;
       modal(`
-        <span class="small muted">${l.kingdom.name} · ${l.name}</span>
+        <span class="small muted">${l.name}</span>
         <h2>${won ? 'Seier!' : 'Slottet falt'}</h2>
         ${won ? `<div class="bigstars">${[1, 2, 3].map(i => starSvg(i <= stars, i <= stars ? 'pop' : '')).join('')}</div>` : ''}
-        ${freedNow ? `<p><b>Fargene er tilbake i ${l.kingdom.name}!</b> Du har beseiret ${l.enemy}.</p>` : ''}
-        <p>${won ? (stars === 3 ? 'Perfekt kamp!' : stars === 2 ? 'Flott kamp!' : 'Du vant!') : l.enemy + ' vant denne gangen. Prøv igjen, du blir bedre for hver kamp!'}</p>
+        <p>${won ? 'Bra kjempet!' : l.enemy + ' vant denne gangen. Prøv igjen!'}</p>
         <div class="reward">${won ? `<span class="pill"><svg class="coin"><use href="#i-coin"/></svg>+${gold}</span>` : ''}<span class="pill">${b.right} riktige</span><span class="pill">${b.wrong} feil</span></div>
         ${uniq.length ? `<p class="small muted">Øv litt på disse:</p><div class="chips">${uniq.map(m => `<span>${m}</span>`).join('')}</div>` : ''}
-        ${nextL ? `<button class="btn pink big" id="rNext">Neste: ${nextL.name}</button>` : ''}
-        <button class="btn ${nextL ? '' : 'pink'} big" id="rAgain">${won ? 'Spill nivået igjen' : 'Prøv igjen'}</button>
+        <button class="btn pink big" id="rAgain">Ny rask kamp</button>
         <button class="link" id="rMap">Til kartet</button>`);
-      if (won) setTimeout(() => sfx.coin(), 500);
-      $('rAgain').onclick = () => { closeModal(); startBattle(l); };
+      $('rAgain').onclick = () => { closeModal(); $('quickBtn').click(); };
       $('rMap').onclick = () => { closeModal(); B = null; show('vMap'); };
-      if (nextL) $('rNext').onclick = () => { closeModal(); openLevel(nextL); };
     }, 1100);
-  }
-  function nextLevelAfter(l) {
-    const list = l.kingdom.list, n = list[list.indexOf(l) + 1];
-    if (n && levelOpen(n)) return n;
-    const k2 = KINGDOMS[l.ki + 1];
-    if (l.boss && k2 && k2.list && kingdomOpen(l.ki + 1)) return k2.list[0];
-    return null;
   }
 
   window.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT' || !$('modal').hidden) return;
     let handler = null;
-    if (!$('vBattle').hidden) handler = press;
-    else if (!$('vForge').hidden) handler = fpress;
+    if (visible('vBattle')) handler = press;
+    else if (visible('vForge')) handler = fpress;
+    else if (visible('vJourney') && !$('jpad').hidden) handler = jpress;
     if (!handler) return;
     if (/^[0-9]$/.test(e.key)) handler(e.key);
     else if (e.key === 'Backspace') { e.preventDefault(); handler('del'); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (!$('vForge').hidden && !$('fexplain').hidden) forgeNext(); else handler('ok'); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (visible('vForge') && !$('fexplain').hidden) forgeNext(); else handler('ok'); }
   });
 
-  // ================= workshop =================
+  // ================= shop =================
   const UPGRADES = [
     { id: 'wall', name: 'Tykkere murer', desc: lv => '+20 helse på slottet (nå ' + (100 + lv * 20) + ')', costs: [40, 80, 140, 220, 320] },
     { id: 'cata', name: 'Sterkere katapult', desc: lv => '+12 % skade per nivå (nå +' + lv * 12 + ' %)', costs: [50, 100, 170, 260, 380] },
     { id: 'shield', name: 'Magisk skjold', desc: lv => 'Skjold etter ' + (5 - lv) + ' riktige på rad', costs: [90, 200] }
   ];
+  const DECOS = [
+    { id: 'bunting', name: 'Vimpler', desc: 'Fargerike vimpler mellom tårnene.', price: 60, cur: 'gold' },
+    { id: 'garden', name: 'Blomsterhage', desc: 'Blomster langs slottsmuren.', price: 80, cur: 'gold' },
+    { id: 'moat', name: 'Andedam', desc: 'En liten dam med en gul and.', price: 120, cur: 'gold' },
+    { id: 'fireworks', name: 'Fyrverkeri', desc: 'Fyrverkeri over slottet når du vinner en kamp.', price: 100, cur: 'gold' },
+    { id: 'statue', name: 'Glimt-statue', desc: 'En statue av dragen din ved slottet.', price: 3, cur: 'gem' },
+    { id: 'rainbow', name: 'Regnbue', desc: 'En regnbue som står over slottet.', price: 5, cur: 'gem' }
+  ];
   const FLAGS = ['#FF5FA2', '#FFB627', '#3CC9A0', '#4DA3FF', '#7C5CFF', '#FF6B6B', '#FFFFFF', '#2B2350'];
   const ROOFS = ['#7C5CFF', '#FF5FA2', '#4DA3FF', '#3CC9A0', '#FF8A5B', '#FFB627', '#5B4A86', '#E0457B'];
   const WALLS = ['#EBDDFF', '#FFE0EE', '#DDF3FF', '#E1F7E7', '#FFF1CC', '#F2EEE6', '#FFD9C7', '#D9D4F2'];
-  function renderShop() {
-    $('goldTxt2').textContent = save.gold;
-    const host = $('upgrades'); host.innerHTML = '';
-    UPGRADES.forEach(u => {
-      const lv = save.up[u.id], max = u.costs.length, cost = u.costs[lv];
-      const el = document.createElement('div'); el.className = 'item';
-      el.innerHTML = `<div><b></b><div class="small muted"></div><div class="pips">${u.costs.map((_, i) => `<i class="${i < lv ? 'on' : ''}"></i>`).join('')}</div></div><button class="btn gold"></button>`;
-      el.querySelector('b').textContent = u.name;
-      el.querySelector('.muted').textContent = u.desc(lv);
-      const b = el.querySelector('button');
-      if (lv >= max) { b.textContent = 'Maks'; b.disabled = true; }
-      else {
-        b.textContent = cost + ' gull';
-        b.disabled = save.gold < cost;
-        b.onclick = () => { if (save.gold < cost) return; save.gold -= cost; save.up[u.id]++; persist(); sfx.coin(); toast(u.name + ' er oppgradert!'); renderShop(); };
-      }
-      host.appendChild(el);
-    });
-    const sw = (id, list, key) => {
-      const h = $(id); h.innerHTML = '';
-      list.forEach(col => {
-        const b = document.createElement('button');
-        b.style.background = col;
-        b.setAttribute('aria-pressed', String(save[key] === col));
-        b.setAttribute('aria-label', (save.owned.includes(col) ? 'Bruk fargen ' : 'Kjøp fargen ') + col);
-        if (!save.owned.includes(col)) b.innerHTML = '<span class="price">25</span>';
-        b.onclick = () => {
-          if (!save.owned.includes(col)) {
-            if (save.gold < 25) { toast('Du trenger 25 gull. Vinn flere kamper!'); return; }
-            save.gold -= 25; save.owned.push(col); sfx.coin();
-          }
-          save[key] = col; persist(); renderShop();
-        };
-        h.appendChild(b);
-      });
-    };
-    sw('flagSw', FLAGS, 'flag'); sw('roofSw', ROOFS, 'roof'); sw('wallSw', WALLS, 'wall');
-    drawPreview();
+  const DRESSES = ['#FF8FC7', '#C3A8FF', '#7FD7FF', '#7FE0C3', '#FFD86B', '#FF8A5B', '#FFFFFF', '#5B4A86'];
+  const HAIRS = ['#6B3E26', '#2B2350', '#E8B04A', '#C2502E', '#FFF1CC', '#FF8FC7'];
+  const CROWNS = [
+    { id: 'gold', name: 'Gullkrone', price: 0, cur: 'gold' }, { id: 'tiara', name: 'Sølvdiadem', price: 40, cur: 'gold' },
+    { id: 'flowers', name: 'Blomsterkrans', price: 50, cur: 'gold' }, { id: 'star', name: 'Stjernekrone', price: 3, cur: 'gem' }
+  ];
+  const DRAGON_LOOKS = [{ id: 'mint', name: 'Mintgrønn', price: 0, cur: 'gold' }, { id: 'pink', name: 'Rosa', price: 40, cur: 'gold' }, { id: 'lilac', name: 'Lilla', price: 40, cur: 'gold' }, { id: 'sky', name: 'Himmelblå', price: 40, cur: 'gold' }, { id: 'gold', name: 'Gull', price: 4, cur: 'gem' }];
+  const DRAGON_ACC = [{ id: 'bow', name: 'Sløyfe', price: 30, cur: 'gold' }, { id: 'scarf', name: 'Skjerf', price: 40, cur: 'gold' }, { id: 'hat', name: 'Festhatt', price: 40, cur: 'gold' }, { id: 'glasses', name: 'Solbriller', price: 50, cur: 'gold' }, { id: 'crown', name: 'Dragekrone', price: 3, cur: 'gem' }];
+  let shopTab = 'slott';
+  const canPay = (price, cur) => (cur === 'gem' ? save.gems : save.gold) >= price;
+  function pay(price, cur) {
+    if (!canPay(price, cur)) { toast(cur === 'gem' ? 'Du trenger flere diamanter. Finn dem i skattkister på reisen!' : 'Du trenger mer gull. Reis og vinn kamper!'); return false; }
+    if (cur === 'gem') { save.gems -= price; sfx.gem(); } else { save.gold -= price; sfx.coin(); }
+    return true;
   }
+  const priceTag = (price, cur) => price === 0 ? '' : `<span class="price${cur === 'gem' ? ' g' : ''}">${price}${cur === 'gem' ? ' ◆' : ''}</span>`;
+  const itemRow = (name, desc, right, on) => `<div class="item${on ? ' on' : ''}"><div><b>${name}</b>${desc ? `<div class="small muted">${desc}</div>` : ''}</div>${right}</div>`;
+  const buyBtn = (price, cur, attrs) => `<button class="btn ${cur === 'gem' ? 'gem' : 'gold'}" ${attrs}>${price}${cur === 'gem' ? ' diamanter' : ' gull'}</button>`;
+  const toggleBtn = (on, attr, onLabel, offLabel) => `<button class="btn ${on ? 'violet' : ''}" ${attr}>${on ? onLabel : offLabel}</button>`;
+
+  function renderShop() {
+    $('sGold').textContent = save.gold; $('sGems').textContent = save.gems;
+    document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === shopTab)));
+    let html = '';
+    const swatchGroup = (title, slotKey, list, price, isCastle) => {
+      html += `<div class="card"><h3>${title}</h3><div class="swatches" data-sw="${slotKey}">`;
+      list.forEach(col => {
+        const have = isCastle ? save.owned.includes(col) : (save.owned.includes(slotKey + ':' + col) || col === list[0]);
+        const cur = isCastle ? save[slotKey] : save.wear[slotKey];
+        html += `<button data-col="${col}" style="background:${col}" aria-pressed="${cur === col}" aria-label="${have ? 'Bruk' : 'Kjøp'} fargen">${have ? '' : priceTag(price, 'gold')}</button>`;
+      });
+      html += `</div></div>`;
+    };
+    if (shopTab === 'slott') {
+      html += '<div class="card"><h3>Forsterk slottet</h3><div class="shop">';
+      UPGRADES.forEach(u => {
+        const lv = save.up[u.id], max = u.costs.length, cost = u.costs[lv];
+        html += `<div class="item"><div><b>${u.name}</b><div class="small muted">${u.desc(lv)}</div><div class="pips">${u.costs.map((_, i) => `<i class="${i < lv ? 'on' : ''}"></i>`).join('')}</div></div>${lv >= max ? '<button class="btn" disabled>Maks</button>' : buyBtn(cost, 'gold', `data-up="${u.id}" ${save.gold < cost ? 'disabled' : ''}`)}</div>`;
+      });
+      html += '</div></div><div class="card"><h3>Pynt</h3><div class="shop">';
+      DECOS.forEach(d => {
+        const have = owns('deco:' + d.id), on = !!save.deco[d.id];
+        html += itemRow(d.name, d.desc, have ? toggleBtn(on, `data-deco="${d.id}"`, 'På', 'Av') : buyBtn(d.price, d.cur, `data-buydeco="${d.id}"`), have && on);
+      });
+      html += '</div></div>';
+      swatchGroup('Flaggfarge', 'flag', FLAGS, 25, true);
+      swatchGroup('Takfarge', 'roof', ROOFS, 25, true);
+      swatchGroup('Murfarge', 'wall', WALLS, 25, true);
+    } else if (shopTab === 'dronning') {
+      swatchGroup('Kjole', 'dress', DRESSES, 20, false);
+      swatchGroup('Hår', 'hair', HAIRS, 15, false);
+      html += '<div class="card"><h3>Krone</h3><div class="shop">';
+      CROWNS.forEach(cr => {
+        const have = cr.price === 0 || owns('crown:' + cr.id), on = save.wear.crown === cr.id;
+        html += itemRow(cr.name, '', have ? toggleBtn(on, `data-crown="${cr.id}"`, 'På', 'Bruk') : buyBtn(cr.price, cr.cur, `data-buycrown="${cr.id}"`), on);
+      });
+      html += '</div></div><div class="card"><h3>Tilbehør</h3><div class="shop">';
+      [['cape', 'Kongekappe', 'En flagrende kappe i kjolefargen.', 70, 'gold'], ['wand', 'Tryllestav', 'En stav med en glitrende stjerne.', 2, 'gem']].forEach(([id, name, desc, price, cur]) => {
+        const have = owns('wear:' + id), on = !!save.wear[id];
+        html += itemRow(name, desc, have ? toggleBtn(on, `data-wear="${id}"`, 'På', 'Av') : buyBtn(price, cur, `data-buywear="${id}" data-price="${price}" data-cur="${cur}"`), have && on);
+      });
+      html += '</div></div>';
+    } else if (shopTab === 'glimt') {
+      html += '<div class="card"><h3>Farge på Glimt</h3><div class="shop">';
+      DRAGON_LOOKS.forEach(d => {
+        const have = d.price === 0 || owns('dcolor:' + d.id), on = save.wear.dcolor === d.id;
+        html += itemRow(d.name, '', have ? toggleBtn(on, `data-dcolor="${d.id}"`, 'Valgt', 'Velg') : buyBtn(d.price, d.cur, `data-buydcolor="${d.id}"`), on);
+      });
+      html += '</div></div><div class="card"><h3>Tilbehør til Glimt</h3><p class="small muted">Glimt kan ha på seg én ting om gangen.' + (stageOf(save.xp) === 0 ? ' Glimt er fortsatt et egg, men du ser tilbehøret her i butikken.' : '') + '</p><div class="shop">';
+      DRAGON_ACC.forEach(d => {
+        const have = owns('dacc:' + d.id), on = save.wear.dacc === d.id;
+        html += itemRow(d.name, '', have ? toggleBtn(on, `data-dacc="${d.id}"`, 'På', 'Bruk') : buyBtn(d.price, d.cur, `data-buydacc="${d.id}"`), on);
+      });
+      html += '</div></div>';
+    } else if (shopTab === 'dyr') {
+      html += '<div class="card"><h3>Kjæledyr</h3><p class="small muted">Et kjæledyr følger deg på reisen og hjelper til. Du kan ha med ett om gangen.</p><div class="shop">';
+      Object.entries(PETS).forEach(([id, p]) => {
+        const have = owns('pet:' + id), on = save.wear.pet === id;
+        html += itemRow(p.name, p.desc, have ? toggleBtn(on, `data-pet="${id}"`, 'Med', 'Ta med') : buyBtn(p.price, p.cur, `data-buypet="${id}"`), on);
+      });
+      html += '</div></div>';
+    } else {
+      html += '<div class="card"><h3>Utstyr til reisen</h3><p class="small muted">Brukes opp når du bruker det. Handelskvinnen på veien selger det litt billigere.</p><div class="shop">';
+      Object.entries(BAG).forEach(([id, it]) => {
+        html += itemRow(it.name + ' · har ' + save.bag[id] + '/' + it.max, it.desc, buyBtn(it.price, 'gold', `data-bag="${id}" ${save.bag[id] >= it.max || save.gold < it.price ? 'disabled' : ''}`), false);
+      });
+      html += '</div></div>';
+    }
+    $('shopBody').innerHTML = html;
+  }
+  $('shopBody').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return;
+    const d = b.dataset;
+    if (d.up) { const u = UPGRADES.find(x => x.id === d.up), cost = u.costs[save.up[u.id]]; if (pay(cost, 'gold')) { save.up[u.id]++; toast(u.name + ' er oppgradert!'); } }
+    else if (d.buydeco) { const it = DECOS.find(x => x.id === d.buydeco); if (pay(it.price, it.cur)) { save.items.push('deco:' + it.id); save.deco[it.id] = true; toast(it.name + ' er satt opp!'); } }
+    else if (d.deco) save.deco[d.deco] = !save.deco[d.deco];
+    else if (d.buycrown) { const it = CROWNS.find(x => x.id === d.buycrown); if (pay(it.price, it.cur)) { save.items.push('crown:' + it.id); save.wear.crown = it.id; } }
+    else if (d.crown) save.wear.crown = d.crown;
+    else if (d.buywear) { if (pay(+d.price, d.cur)) { save.items.push('wear:' + d.buywear); save.wear[d.buywear] = true; } }
+    else if (d.wear) save.wear[d.wear] = !save.wear[d.wear];
+    else if (d.buydcolor) { const it = DRAGON_LOOKS.find(x => x.id === d.buydcolor); if (pay(it.price, it.cur)) { save.items.push('dcolor:' + it.id); save.wear.dcolor = it.id; } }
+    else if (d.dcolor) save.wear.dcolor = d.dcolor;
+    else if (d.buydacc) { const it = DRAGON_ACC.find(x => x.id === d.buydacc); if (pay(it.price, it.cur)) { save.items.push('dacc:' + it.id); save.wear.dacc = it.id; } }
+    else if (d.dacc) save.wear.dacc = save.wear.dacc === d.dacc ? '' : d.dacc;
+    else if (d.buypet) { const p = PETS[d.buypet]; if (pay(p.price, p.cur)) { save.items.push('pet:' + d.buypet); save.wear.pet = d.buypet; toast(p.name + ' blir med deg!'); } }
+    else if (d.pet) save.wear.pet = save.wear.pet === d.pet ? '' : d.pet;
+    else if (d.bag) { const it = BAG[d.bag]; if (save.bag[d.bag] < it.max && pay(it.price, 'gold')) save.bag[d.bag]++; }
+    else if (d.col) {
+      const group = b.closest('[data-sw]').dataset.sw, col = d.col;
+      const isCastle = ['flag', 'roof', 'wall'].includes(group);
+      const list = { flag: FLAGS, roof: ROOFS, wall: WALLS, dress: DRESSES, hair: HAIRS }[group];
+      const have = isCastle ? save.owned.includes(col) : (save.owned.includes(group + ':' + col) || col === list[0]);
+      const price = isCastle ? 25 : group === 'dress' ? 20 : 15;
+      if (!have) { if (!pay(price, 'gold')) return; save.owned.push(isCastle ? col : group + ':' + col); }
+      if (isCastle) save[group] = col; else save.wear[group] = col;
+    } else return;
+    persist(); renderShop();
+  });
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => { shopTab = b.dataset.tab; renderShop(); }));
   function drawPreview() {
     const c = $('previewCv').getContext('2d');
-    c.save(); c.clearRect(0, 0, 400, 220);
-    c.scale(0.5, 0.5);
     const t = performance.now() / 1000;
-    drawSky(c, 800, 440, ['#BFE6FF', '#FFE6F3'], t);
-    drawIsland(c, 400, 330, '#8EE08A', '#C8A8E8', 3);
-    drawCastle(c, 400, 321, { wall: save.wall, roof: save.roof, flag: save.flag }, null, 'happy', 1);
-    drawDragon(c, 230, 150, stageOf(save.xp), t, 1.3);
-    c.restore();
+    c.clearRect(0, 0, 800, 460);
+    drawSky(c, 800, 460, ['#BFE6FF', '#FFE6F3'], t);
+    drawIsland(c, 360, 340, '#8EE08A', '#C8A8E8', 3);
+    drawCastle(c, 330, 331, { wall: save.wall, roof: save.roof, flag: save.flag }, null, 'happy', 1, save.deco);
+    drawQueen(c, 480, 331, t, false, null, 1.7);
+    drawPet(c, save.wear.pet, 545, 331, t, 1.5);
+    drawDragon(c, 610, 150 + Math.sin(t * 2) * 8, Math.max(1, stageOf(save.xp)), t, 1.5);
   }
   $('shopBtn').addEventListener('click', () => { show('vShop'); renderShop(); });
 
@@ -1145,10 +1946,7 @@
     all.sort((x, y) => x.score - y.score);
     return all.slice(0, n);
   }
-  function startForge() {
-    F = { list: weakest(10), i: 0, right: 0, input: '', locked: false };
-    show('vForge'); forgeShow();
-  }
+  function startForge() { F = { list: weakest(10), i: 0, right: 0, input: '', locked: false }; show('vForge'); forgeShow(); }
   function forgeShow() {
     const q = F.list[F.i];
     $('ftext').textContent = q.a + ' × ' + q.b + ' =';
@@ -1225,20 +2023,46 @@
       <h2>War of Castles</h2>
       <div class="story">
         <p>Den grå <b>Skyggebaronen</b> har stjålet fargene fra fem riker i skyene. Nå er alt grått og trist.</p>
-        <p>Du er dronningen av et lite slott på en flytende øy. Med katapulten din, et drageegg og gangetabellen kan du vinne fargene tilbake.</p>
-        <p>Hvert riktig svar sender en stein, en ildkule eller en regnbuepil mot fiendens slott. Jo flinkere du blir, jo tøffere blir motstanderne.</p>
-        ${save.gold ? `<p>Stjernene dine fra Gangemester er blitt til <b>${save.gold} gull</b>. Bruk dem i verkstedet!</p>` : ''}
+        <p>Du er dronningen av et lite slott på en flytende øy. Sammen med drageegget <b>Glimt</b> reiser du gjennom rikene: over elver, forbi troll og skyggevetter, og fram til fiendens slott.</p>
+        <p>Gangetabellen er magien din. Hvert riktig svar hjelper deg videre på reisen.</p>
+        ${save.gold ? `<p>Du har <b>${save.gold} gull</b> å starte med. Ta en titt i butikken!</p>` : ''}
       </div>
       <label class="small muted" for="nameIn" style="text-align:left">Hva heter dronningen?</label>
       <input class="name-in" id="nameIn" maxlength="16" autocomplete="off" placeholder="Navnet ditt">
       <button class="btn pink big" id="introGo">Til kartet</button>`);
     $('nameIn').value = save.name || '';
-    $('introGo').onclick = () => { save.name = $('nameIn').value.trim(); save.intro = true; persist(); closeModal(); renderMap(); };
+    $('introGo').onclick = () => { save.name = $('nameIn').value.trim(); save.intro = true; save.seenV2 = true; persist(); closeModal(); renderMap(); };
+  }
+  function whatsNew() {
+    modal(`
+      <h2>Nytt eventyr!</h2>
+      <div class="story">
+        <p>Nå er hver etappe en <b>reise</b> gjennom riket. På veien møter du steinsprang over elva, skattkister med låser, trollbruer, skyggevetter og en handelskvinne, og til slutt fiendens slott.</p>
+        <p><b>Butikken</b> er mye større: klær og kroner til dronningen, farger og tilbehør til Glimt, kjæledyr som hjelper deg, pynt til slottet og utstyr til reisen.</p>
+        <p>Alle fem rikene kan nå vinnes tilbake. Finn <b>diamanter</b> i skattkistene!</p>
+      </div>
+      <button class="btn pink big" id="newGo">Spennende!</button>`);
+    $('newGo').onclick = () => { save.seenV2 = true; persist(); closeModal(); };
+  }
+
+  // ================= main loop =================
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    try {
+      if (visible('vMap')) drawHero();
+      else if (visible('vJourney')) { if (J && $('modal').hidden && !J.paused && J.mode !== 'done') journeyTick(dt); journeyDraw(); }
+      else if (visible('vBattle')) { battleTick(dt); battleDraw(); }
+      else if (visible('vShop')) drawPreview();
+    } catch (e) { console.error(e); }
+    requestAnimationFrame(frame);
   }
 
   renderSound();
   show('vMap');
   if (!save.intro) intro();
+  else if (!save.seenV2) whatsNew();
+  requestAnimationFrame(t => { last = t; frame(t); });
 })();
 </script>
 <script>

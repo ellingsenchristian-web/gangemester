@@ -6,17 +6,19 @@ Et gangetabellspill der riktige svar skyter katapulten mot Skyggebaronens slott.
 
 ## Slik virker spillet
 
-- **Kart med riker.** Skyggebaronen har stjålet fargene fra fem riker. Hvert rike har 7 nivåer og en sjefskamp. Når sjefen er slått, får riket fargene tilbake.
-  - Engriket: 2-, 5- og 10-gangen
-  - Skogriket: 3- og 4-gangen
-  - Fjellriket, Dragedalen og Skyggefestningen kommer i neste runde.
-- **Kamp.** Riktig svar skyter. Fienden lader opp i bakgrunnen, og feil svar gir ham fart. Fiendens fart tilpasses hvor raskt spilleren svarer.
-- **Ammunisjon.** Stein (lett), ildkule (vanskeligere stykker, mer skade) og regnbuepil (to steg, f.eks. 6 × 7 + 8).
-- **Dragen Glimt** klekkes og vokser med riktige svar, og hjelper til i kamp når den er stor nok.
-- **Verksted** for murer, katapult, skjold og farger på slottet. **Smia** øver rolig på de vanskeligste stykkene. **Stjernekartet** viser alle 100 gangestykker.
-- **Dagens oppdrag** gir ekstra gull for 3 seire per dag.
+- **Fem riker** som Skyggebaronen har stjålet fargene fra: Engriket (2, 5, 10), Skogriket (3, 4), Fjellriket (6, 7), Dragedalen (8, 9) og Skyggefestningen (alt blandet). Hvert rike har 7 etapper og en sjefsreise.
+- **Reiser.** Hver etappe er en vandring gjennom riket med 3 hjerter. På veien:
+  - Steinsprang over elva (velg riktig svar)
+  - Skattkiste med tre låser (finn tallet som mangler, f.eks. 7 × ? = 56)
+  - Trollbrua (legg 6 planker før tiden går ut)
+  - Skyggevette (svar før tiden går ut)
+  - Handelskvinne, gyllen skatt og fiendeslott med katapultkamp
+- **Stjerner** etter hvor mange hjerter du har igjen. Sjefsreisen krever 12 stjerner i riket.
+- **Butikken** har fem avdelinger: slott (oppgraderinger, pynt og farger), dronning (kjoler, hår, kroner, kappe, tryllestav), Glimt (farger og tilbehør), kjæledyr som hjelper på reisen, og utstyr (hjertedrikk, firkløver, skjoldamulett). Noe koster gull, noe koster diamanter fra skattkistene.
+- **Dragen Glimt** vokser med riktige svar og hjelper til i kamp. **Smia** øver rolig på de vanskeligste stykkene. **Stjernekartet** viser alle 100 gangestykker. **Rask kamp** gir en katapultkamp når som helst.
+- Vanskelighetsgraden tilpasses: spillet spør oftere om stykkene som ikke sitter, og tidsgrensene følger hvor raskt spilleren pleier å svare.
 
-Framgangen lagres bare på enheten. Stjerner fra den gamle Gangemester blir til startgull.
+Framgangen lagres bare på enheten.
 
 ## På iPhone
 
